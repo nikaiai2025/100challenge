@@ -184,9 +184,10 @@ function App() {
 
       {isModalOpen && (
         <ByokModal
-          onClose={() => {
+          onClose={() => setIsModalOpen(false)}
+          onSave={() => {
             setIsModalOpen(false);
-            refreshCardList(); // refresh card list in case models were updated
+            refreshCardList(); // refresh card list only after saving changes
           }}
         />
       )}
@@ -194,7 +195,13 @@ function App() {
   );
 }
 
-function ByokModal({ onClose }: { onClose: () => void }) {
+function ByokModal({
+  onClose,
+  onSave,
+}: {
+  onClose: () => void;
+  onSave: () => void;
+}) {
   const [formData, setFormData] = useState<
     Record<string, { keys: string; models: string }>
   >({});
@@ -238,7 +245,7 @@ function ByokModal({ onClose }: { onClose: () => void }) {
         localStorage.removeItem(`models_${providerName}`);
       }
     });
-    onClose();
+    onSave();
   };
 
   return (
