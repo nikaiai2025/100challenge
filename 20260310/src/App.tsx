@@ -27,7 +27,20 @@ const buildCardList = (): { providerName: string; model: string }[] => {
 const cardKey = (providerName: string, model: string) =>
   `${providerName}:${model}`;
 
+const REPO_URL = 'https://github.com/nikaiai2025/100challenge';
+
+const resolveProjectSlug = (): string => {
+  if (typeof window === 'undefined') return '';
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  for (let i = parts.length - 1; i >= 0; i -= 1) {
+    if (/^\d{8}$/.test(parts[i])) return parts[i];
+  }
+  return '';
+};
+
 function App() {
+  const projectSlug = resolveProjectSlug();
+  const sourceUrl = projectSlug ? `${REPO_URL}/tree/main/${projectSlug}` : REPO_URL;
   const [prompt, setPrompt] = useState<string>(
     process.env.AI_API_POC_PROMPT ||
     '簡単に自己紹介して。名前と所属と、あなたが嫌いなAIモデルを教えて'
@@ -110,9 +123,19 @@ function App() {
       <header>
         <div className="header-top">
           <h1>Multi-Provider AI Explorer</h1>
-          <button className="btn btn-outline" onClick={() => setIsModalOpen(true)}>
-            Key Registration (BYOK)
-          </button>
+          <div className="header-actions">
+            <a
+              className="btn btn-outline link-button"
+              href={sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Source Code
+            </a>
+            <button className="btn btn-outline" onClick={() => setIsModalOpen(true)}>
+              Key Registration (BYOK)
+            </button>
+          </div>
         </div>
 
         <div className="prompt-area">
