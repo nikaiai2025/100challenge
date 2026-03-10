@@ -1,0 +1,56 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 1. Node.js環境をセットアップ
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: './20260310/package-lock.json' #
+
+      # 2. Reactアプリをビルド
+      - name: Install and Build 20260310
+        run: |
+          cd 20260310
+          npm install    #
+          npm run build  #
+
+      # 3. GitHub Pagesの設定（標準的な手順）
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # 4. アップロード
+      # path: . にすることで、ルートの index.html と、ビルドされた 20260310/dist の両方が公開されます
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      # 5. デプロイ実行
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
