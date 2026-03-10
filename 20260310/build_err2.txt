@@ -1,0 +1,4 @@
+src/api/client.ts(1,26): error TS6133: 'PROVIDERS' is declared but its value is never read.
+src/App.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/App.tsx(2,21): error TS6133: 'ProviderConfig' is declared but its value is never read.
+src/App.tsx(3,48): error TS6133: 'getStoredKeys' is declared but its value is never read.

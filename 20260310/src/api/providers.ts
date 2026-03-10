@@ -1,0 +1,140 @@
+export interface ProviderConfig {
+    name: string;
+    kind: 'gemini' | 'cohere' | 'openai';
+    key_env: string;
+    keys_env: string;
+    model_env: string;
+    models_env: string;
+    default_model: string;
+    endpoint_env: string;
+    default_endpoint: string;
+    extra_headers?: Record<string, string>;
+    iconUrl?: string;
+}
+
+export const PROVIDERS: ProviderConfig[] = [
+    {
+        name: "gemini",
+        kind: "gemini",
+        key_env: "GOOGLE_GENERATIVE_AI_API_KEY",
+        keys_env: "GOOGLE_GENERATIVE_AI_API_KEYS",
+        model_env: "GEMINI_MODEL",
+        models_env: "GEMINI_MODELS",
+        default_model: "gemini-2.0-flash",
+        endpoint_env: "GEMINI_ENDPOINT",
+        default_endpoint: "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}",
+        iconUrl: "https://www.google.com/s2/favicons?domain=gemini.google.com&sz=128",
+    },
+    {
+        name: "groq",
+        kind: "openai",
+        key_env: "GROQ_API_KEY",
+        keys_env: "GROQ_API_KEYS",
+        model_env: "GROQ_MODEL",
+        models_env: "GROQ_MODELS",
+        default_model: "llama-3.1-8b-instant",
+        endpoint_env: "GROQ_ENDPOINT",
+        default_endpoint: "https://api.groq.com/openai/v1/chat/completions",
+        iconUrl: "https://www.google.com/s2/favicons?domain=groq.com&sz=128",
+    },
+    {
+        name: "openrouter",
+        kind: "openai",
+        key_env: "OPENROUTER_API_KEY",
+        keys_env: "OPENROUTER_API_KEYS",
+        model_env: "OPENROUTER_MODEL",
+        models_env: "OPENROUTER_MODELS",
+        default_model: "openrouter/auto",
+        endpoint_env: "OPENROUTER_ENDPOINT",
+        default_endpoint: "https://openrouter.ai/api/v1/chat/completions",
+        extra_headers: {
+            "HTTP-Referer": "OPENROUTER_SITE_URL",
+            "X-Title": "OPENROUTER_APP_NAME",
+        },
+        iconUrl: "https://www.google.com/s2/favicons?domain=openrouter.ai&sz=128",
+    },
+    {
+        name: "mistral",
+        kind: "openai",
+        key_env: "MISTRAL_API_KEY",
+        keys_env: "MISTRAL_API_KEYS",
+        model_env: "MISTRAL_MODEL",
+        models_env: "MISTRAL_MODELS",
+        default_model: "mistral-small-latest",
+        endpoint_env: "MISTRAL_ENDPOINT",
+        default_endpoint: "https://api.mistral.ai/v1/chat/completions",
+        iconUrl: "https://www.google.com/s2/favicons?domain=mistral.ai&sz=128",
+    },
+    {
+        name: "cohere",
+        kind: "cohere",
+        key_env: "COHERE_API_KEY",
+        keys_env: "COHERE_API_KEYS",
+        model_env: "COHERE_MODEL",
+        models_env: "COHERE_MODELS",
+        default_model: "command-a-03-2025",
+        endpoint_env: "COHERE_ENDPOINT",
+        default_endpoint: "https://api.cohere.com/v2/chat",
+        iconUrl: "https://www.google.com/s2/favicons?domain=cohere.com&sz=128",
+    },
+    {
+        name: "hf",
+        kind: "openai",
+        key_env: "HF_TOKEN",
+        keys_env: "HF_TOKENS",
+        model_env: "HF_MODEL",
+        models_env: "HF_MODELS",
+        default_model: "openai/gpt-oss-120b",
+        endpoint_env: "HF_ENDPOINT",
+        default_endpoint: "https://router.huggingface.co/v1/chat/completions",
+        iconUrl: "https://www.google.com/s2/favicons?domain=huggingface.co&sz=128",
+    },
+    {
+        name: "github_models",
+        kind: "openai",
+        key_env: "GITHUB_MODELS_TOKEN",
+        keys_env: "GITHUB_MODELS_TOKENS",
+        model_env: "GITHUB_MODELS_MODEL",
+        models_env: "GITHUB_MODELS_MODELS",
+        default_model: "openai/gpt-4o-mini",
+        endpoint_env: "GITHUB_MODELS_ENDPOINT",
+        default_endpoint: "https://models.inference.ai.azure.com/chat/completions",
+        iconUrl: "https://www.google.com/s2/favicons?domain=github.com&sz=128",
+    },
+    {
+        name: "cerebras",
+        kind: "openai",
+        key_env: "CEREBRAS_API_KEY",
+        keys_env: "CEREBRAS_API_KEYS",
+        model_env: "CEREBRAS_MODEL",
+        models_env: "CEREBRAS_MODELS",
+        default_model: "llama3.1-8b",
+        endpoint_env: "CEREBRAS_ENDPOINT",
+        default_endpoint: "https://api.cerebras.ai/v1/chat/completions",
+        iconUrl: "https://www.google.com/s2/favicons?domain=cerebras.ai&sz=128",
+    },
+    {
+        name: "sambanova",
+        kind: "openai",
+        key_env: "SAMBANOVA_API_KEY",
+        keys_env: "SAMBANOVA_API_KEYS",
+        model_env: "SAMBANOVA_MODEL",
+        models_env: "SAMBANOVA_MODELS",
+        default_model: "Meta-Llama-3.3-70B-Instruct",
+        endpoint_env: "SAMBANOVA_ENDPOINT",
+        default_endpoint: "https://api.sambanova.ai/v1/chat/completions",
+        iconUrl: "https://www.google.com/s2/favicons?domain=sambanova.ai&sz=128",
+    },
+    {
+        name: "fireworks",
+        kind: "openai",
+        key_env: "FIREWORKS_API_KEY",
+        keys_env: "FIREWORKS_API_KEYS",
+        model_env: "FIREWORKS_MODEL",
+        models_env: "FIREWORKS_MODELS",
+        default_model: "accounts/fireworks/models/llama-v3p1-8b-instruct",
+        endpoint_env: "FIREWORKS_ENDPOINT",
+        default_endpoint: "https://api.fireworks.ai/inference/v1/chat/completions",
+        iconUrl: "https://www.google.com/s2/favicons?domain=fireworks.ai&sz=128",
+    },
+];
