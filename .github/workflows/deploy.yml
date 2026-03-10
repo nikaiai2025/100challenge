@@ -24,33 +24,42 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 1. Node.js環境をセットアップ
+      # 1. Setup Node.js
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: './20260310/package-lock.json' #
+          cache-dependency-path: '**/package-lock.json'
 
-      # 2. Reactアプリをビルド
-      - name: Install and Build 20260310
+      # 2. Build all date folders into a deployable site folder
+      - name: Build date projects
         run: |
-          cd 20260310
-          npm install    #
-          npm run build  #
+          mkdir -p site
+          for dir in */; do
+            if [[ "$dir" =~ ^[0-9]{8}/$ ]] && [[ -f "${dir}package.json" ]]; then
+              echo "Building $dir"
+              npm ci --prefix "$dir"
+              npm run build --prefix "$dir" -- --outDir "../site/${dir%/}"
+            fi
+          done
 
-      # 3. GitHub Pagesの設定（標準的な手順）
+      # 3. Generate index.html for the site root
+      - name: Build index
+        run: |
+          node scripts/build-index.mjs --out site/index.html
+
+      # 4. Configure Pages
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # 4. アップロード
-      # path: . にすることで、ルートの index.html と、ビルドされた 20260310/dist の両方が公開されます
+      # 5. Upload artifact for GitHub Pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: site
 
-      # 5. デプロイ実行
+      # 6. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

@@ -1,4 +1,93 @@
-<!doctype html>
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const repoRoot = path.resolve(__dirname, '..');
+
+const args = process.argv.slice(2);
+let outPath = path.resolve(repoRoot, 'index.html');
+for (let i = 0; i < args.length; i += 1) {
+  if (args[i] === '--out' && args[i + 1]) {
+    outPath = path.resolve(repoRoot, args[i + 1]);
+    i += 1;
+  }
+}
+
+const dateDirPattern = /^\d{8}$/;
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatDateFromDir(dirName) {
+  const y = dirName.slice(0, 4);
+  const m = dirName.slice(4, 6);
+  const d = dirName.slice(6, 8);
+  return `${y}-${m}-${d}`;
+}
+
+function readJsonIfExists(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+const projects = fs
+  .readdirSync(repoRoot, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory() && dateDirPattern.test(entry.name))
+  .map((entry) => {
+    const dirName = entry.name;
+    const dirPath = path.join(repoRoot, dirName);
+    const metaPath = path.join(dirPath, 'project.json');
+    const packagePath = path.join(dirPath, 'package.json');
+
+    const meta = readJsonIfExists(metaPath) || {};
+    const pkg = readJsonIfExists(packagePath) || {};
+
+    const date = formatDateFromDir(dirName);
+    const title = meta.title || meta.name || pkg.name || date;
+    const description = meta.description || pkg.description || 'No description yet.';
+    const tags = Array.isArray(meta.tags) ? meta.tags : [];
+
+    return {
+      dirName,
+      date,
+      title,
+      description,
+      tags,
+    };
+  })
+  .sort((a, b) => b.dirName.localeCompare(a.dirName));
+
+const lastUpdated = projects.length ? projects[0].date : '';
+
+const cardsHtml = projects
+  .map((project) => {
+    const tagHtml = project.tags.length
+      ? `<span class="card-tag">${escapeHtml(project.tags.join(' / '))}</span>`
+      : '';
+    return `
+            <a class="card" href="./${escapeHtml(project.dirName)}/">
+                <span class="card-date">${escapeHtml(project.date)}</span>
+                <span class="card-title">${escapeHtml(project.title)}</span>
+                <span class="card-desc">${escapeHtml(project.description)}</span>
+                ${tagHtml}
+                <span class="card-arrow">&rarr;</span>
+            </a>`;
+  })
+  .join('\n');
+
+const html = `<!doctype html>
 <html lang="en">
 
 <head>
@@ -183,16 +272,9 @@
       <p>A growing index of daily builds. Add a new date folder and this page updates automatically.</p>
     </section>
 
-    <p class="section-label">Last updated 2026-03-10</p>
+    <p class="section-label">${escapeHtml(projects.length ? `Last updated ${lastUpdated}` : 'No projects yet')}</p>
     <div class="cards">
-
-            <a class="card" href="./20260310/">
-                <span class="card-date">2026-03-10</span>
-                <span class="card-title">Multi-Provider AI Explorer</span>
-                <span class="card-desc">Compare multiple AI providers and models in one UI. BYOK friendly.</span>
-                <span class="card-tag">React + Vite</span>
-                <span class="card-arrow">&rarr;</span>
-            </a>
+${cardsHtml || '      <p>No projects found.</p>'}
     </div>
 
     <footer>
@@ -202,3 +284,9 @@
 </body>
 
 </html>
+`;
+
+fs.mkdirSync(path.dirname(outPath), { recursive: true });
+fs.writeFileSync(outPath, html, 'utf8');
+
+console.log(`Wrote ${outPath}`);
