@@ -37,10 +37,15 @@ jobs:
         run: |
           mkdir -p site
           for dir in */; do
-            if [[ "$dir" =~ ^[0-9]{8}/$ ]] && [[ -f "${dir}package.json" ]]; then
-              echo "Building $dir"
-              npm ci --prefix "$dir"
-              npm run build --prefix "$dir" -- --outDir "../site/${dir%/}"
+            if [[ "$dir" =~ ^[0-9]{8}/$ ]]; then
+              if [[ -f "${dir}package.json" ]]; then
+                echo "Building $dir"
+                npm ci --prefix "$dir"
+                npm run build --prefix "$dir" -- --outDir "../site/${dir%/}"
+              else
+                echo "Copying static $dir"
+                cp -a "$dir" "site/"
+              fi
             fi
           done
 
