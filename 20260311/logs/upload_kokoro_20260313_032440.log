@@ -1,0 +1,24 @@
+File 1/1: こころ.txt 
+Error: ENOENT: no such file or directory, open 'C:\Users\user\Documents\PGM連携\100challenge\20260311\Aozora_Texts_Preprocessed\こころ.txt '
+    at Object.readFileSync (node:fs:439:20)
+    at uploadOne (C:\Users\user\Documents\PGM連携\100challenge\20260311\server\upload_runner.js:160:21)
+    at uploadAll (C:\Users\user\Documents\PGM連携\100challenge\20260311\server\upload_runner.js:392:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async main (C:\Users\user\Documents\PGM連携\100challenge\20260311\server\upload_cli.js:14:20) {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\user\\Documents\\PGM連携\\100challenge\\20260311\\Aozora_Texts_Preprocessed\\こころ.txt '
+}
+Upload run finished.
+Error: ENOENT: no such file or directory, open 'C:\Users\user\Documents\PGM連携\100challenge\20260311\Aozora_Texts_Preprocessed\こころ.txt '
+    at Object.readFileSync (node:fs:439:20)
+    at uploadOne (C:\Users\user\Documents\PGM連携\100challenge\20260311\server\upload_runner.js:160:21)
+    at uploadAll (C:\Users\user\Documents\PGM連携\100challenge\20260311\server\upload_runner.js:392:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async main (C:\Users\user\Documents\PGM連携\100challenge\20260311\server\upload_cli.js:14:20) {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\user\\Documents\\PGM連携\\100challenge\\20260311\\Aozora_Texts_Preprocessed\\こころ.txt '
+}

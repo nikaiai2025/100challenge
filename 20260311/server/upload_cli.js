@@ -10,10 +10,17 @@ const writeStoreId = (baseDir, storeId) => {
 
 const main = async () => {
   const config = buildConfig();
-  const result = await uploadAll(config);
-  console.log(`Upload completed: ${result.count} files`);
-  console.log(`Store ID: ${result.storeId}`);
-  writeStoreId(config.baseDir, result.storeId);
+  try {
+    const result = await uploadAll(config);
+    console.log(`Upload completed: ${result.count} files`);
+    console.log(`Store ID: ${result.storeId}`);
+    if (result.failed && result.failed.length > 0) {
+      console.log(`Failed uploads: ${result.failed.length}`);
+    }
+    writeStoreId(config.baseDir, result.storeId);
+  } finally {
+    console.log('Upload run finished.');
+  }
 };
 
 main().catch((error) => {
