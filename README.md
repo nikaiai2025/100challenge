@@ -1,24 +1,24 @@
-# 100challenge
+﻿# 100challenge
 
-日付フォルダ（`YYYYMMDD/`）ごとのプロジェクトを GitHub Pages にデプロイするリポジトリです。
+日付フォルダ（`YYYYMMDD/`）ごとの成果物を GitHub Pages に公開するリポジトリです。
 
-## デプロイ手順（GitHub Pages）
+## デプロイ（GitHub Pages）
+1. `main` へ push すると `.github/workflows/deploy.yml` が実行されます。
+2. `YYYYMMDD/` 配下をビルドして `site/` に配置します。
+3. ルート `index.html` は手動編集のため、そのまま `site/index.html` にコピーします。
 
-1. `main` ブランチへ push する  
-   - `.github/workflows/deploy.yml` が起動します。
-2. GitHub Actions の Deploy が完了するのを待つ
-3. GitHub Pages から公開される
+## ルート index.html の運用（手動）
+- ルート `index.html` は手動で編集します。
+- 各日付カードには「コメント」ボタンがあります。
+- コメント本文は `index.html` 内の `<template id="comment-YYYYMMDD">` に Markdown で書きます。
+- モーダルで Markdown 表示されます（簡易レンダラー）。
 
-### 仕組み
+## 日付フォルダの扱い
+- `YYYYMMDD/` に `package.json` がある場合
+  - `npm ci` と `npm run build` を実行して `site/YYYYMMDD/` に出力します。
+- `package.json` がない場合
+  - フォルダをそのまま `site/` にコピーします。
 
-- `YYYYMMDD/` に `package.json` がある場合  
-  - `npm ci` → `npm run build` を実行し、`site/YYYYMMDD/` に出力
-- `package.json` がない場合  
-  - フォルダをそのまま `site/` にコピー（静的サイト）
-
-`site/` に集約された内容が GitHub Pages に配信されます。
-
-## ローカルでの確認
-
-- 静的なフォルダはそのまま `YYYYMMDD/index.html` を開いて確認できます。
-- ビルドが必要なプロジェクトは、それぞれのフォルダで `npm install` / `npm run build` を実行してください。
+## ローカル確認
+- 静的フォルダは `YYYYMMDD/index.html` を直接開いて確認できます。
+- ビルドが必要なフォルダは `npm install` / `npm run build` を使ってください。

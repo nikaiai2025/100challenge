@@ -49,10 +49,10 @@ jobs:
             fi
           done
 
-      # 3. Generate index.html for the site root
-      - name: Build index
+      # 3. Copy manually maintained index.html
+      - name: Copy index
         run: |
-          node scripts/build-index.mjs --out site/index.html
+          cp index.html site/index.html
 
       # 4. Configure Pages
       - name: Setup Pages
