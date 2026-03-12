@@ -76,6 +76,13 @@ body {
   margin-bottom: 0.75rem;
 }
 
+.hero-top-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+
 .hero-top h1 {
   margin: 0;
 }
@@ -111,10 +118,10 @@ body {
 }
 
 .hero-links {
-  margin: 0.6rem 0 0.2rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.5rem;
+  justify-content: flex-end;
 }
 
 .hero-link {

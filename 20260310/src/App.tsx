@@ -132,6 +132,14 @@ function App() {
             >
               Source Code
             </a>
+            <a
+              className="btn btn-outline link-button"
+              href="./docs/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              調査資料（参考）
+            </a>
             <button className="btn btn-outline" onClick={() => setIsModalOpen(true)}>
               Key Registration (BYOK)
             </button>

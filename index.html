@@ -274,21 +274,27 @@
     <div class="cards">
       <article class="card">
         <span class="card-date">2026-03-11</span>
-        <span class="card-title">さまざまな検索方法の比較</span>
-        <span class="card-desc">あおぞら文庫を題材に、全文検索・セマンティック検索・フェデレーション・RAGを比較。</span>
+        <span class="card-title">テキストデータ検索方法の比較</span>
+        <span class="card-desc">全文検索・セマンティック検索・フェデレーション・RAGを比較。（Pagefind、GoogleFileSearch）</span>
         <span class="card-tag">File Search / Federation / RAG</span>
         <div class="card-actions">
           <a class="btn" href="./20260311/">開く</a>
-          <button class="btn ghost comment-btn" type="button" data-comment-id="comment-20260311" data-comment-title="2026-03-11 コメント">コメント</button>
+          <button class="btn ghost comment-btn" type="button" data-comment-id="comment-20260311"
+            data-comment-title="2026-03-11 コメント">コメント</button>
         </div>
         <template id="comment-20260311">
-## 2026-03-11 メモ
-- ここにMarkdownでコメントを書いてください。
-- 例: **重要** / `コード` / [リンク](https://example.com)
+          ## 2026-03-11 メモ
+          - テキストデータ検索方法について実際のイメージを掴むため作成
+          - GoogleFileSearch（フルマネージド型RAG：チャンク化など面倒な作業を自動化できる）に惹かれていたのだが、日本語小説でエラーになるなど期待していた動作ではなかった。
+          - ただしビジネス用途を踏まえると、小説のような長大データはむしろレアケースのため問題ないのかもしれない
+          - Geminiの無料枠では混雑時のエラーが出やすく、そういう意味でもあまり印象は良くなかった。
+          - 一方、全文検索（pagefind）については好印象。速度が速いだけでなく、質的にも単純な文字列一致ではない（ある程度の文法解釈、単語分割をしている）ようで、単純な検索ならこれで十分かと思えた
+          - 複数データソースを結合する場合はRAGの情報集約が鍵となりそうではある。
+          - 当初はBYOK想定だったが、FileSearchのStore作成の都合上、ローカルで実行せざるを得ない状態＝ページ公開する意味がない状態である（一応ローカルにクローンすれば使える）。まぁ学習用なので・・
 
-```bash
-node 20260311/server/upload_cli.js
-```
+          ```bash
+          node 20260311/server/upload_cli.js
+          ```
         </template>
       </article>
 
@@ -299,11 +305,13 @@ node 20260311/server/upload_cli.js
         <span class="card-tag">React + Vite</span>
         <div class="card-actions">
           <a class="btn" href="./20260310/">開く</a>
-          <button class="btn ghost comment-btn" type="button" data-comment-id="comment-20260310" data-comment-title="2026-03-10 コメント">コメント</button>
+          <button class="btn ghost comment-btn" type="button" data-comment-id="comment-20260310"
+            data-comment-title="2026-03-10 コメント">コメント</button>
         </div>
         <template id="comment-20260310">
-## 2026-03-10 メモ
-- ここにMarkdownでコメントを書いてください。
+          ## 2026-03-10 メモ
+          - 無料で使用できるAI APIサービスを集めたもの。
+          - APIキー、モデル名を入力すれば一応BYOKで動作しますが面倒だと思います。クローンして.env使用してください
         </template>
       </article>
     </div>
