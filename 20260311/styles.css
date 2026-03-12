@@ -110,6 +110,33 @@ body {
   flex-wrap: wrap;
 }
 
+.hero-links {
+  margin: 0.6rem 0 0.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 28, 36, 0.2);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.hero-link:hover {
+  border-color: var(--accent);
+  color: var(--accent-dark);
+}
+
 .hero-actions .btn.ghost {
   background: rgba(255, 255, 255, 0.85);
   border-color: rgba(15, 28, 36, 0.2);
@@ -424,6 +451,12 @@ body {
   font-weight: 600;
 }
 
+.column-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .pagination {
   display: flex;
   align-items: center;
@@ -544,6 +577,16 @@ body {
   max-height: 85vh;
   display: flex;
   flex-direction: column;
+}
+
+.filter-modal .modal-card {
+  width: min(640px, 92vw);
+}
+
+.filter-modal .modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .modal-header {

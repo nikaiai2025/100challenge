@@ -47,6 +47,10 @@ const elements = {
   storeStatusBtn: document.getElementById('storeStatusBtn'),
   storeIdDisplay: document.getElementById('storeIdDisplay'),
   storeStatus: document.getElementById('storeStatus'),
+  federationFilterBtn: document.getElementById('federationFilterBtn'),
+  federationFilterModal: document.getElementById('federationFilterModal'),
+  federationFilterBackdrop: document.getElementById('federationFilterBackdrop'),
+  federationFilterClose: document.getElementById('federationFilterClose'),
   textModal: document.getElementById('textModal'),
   textModalBackdrop: document.getElementById('textModalBackdrop'),
   textModalClose: document.getElementById('textModalClose'),
@@ -696,18 +700,48 @@ const buildRagResults = (payload) => {
   ];
 };
 
+const isAnyModalOpen = () => {
+  const textOpen = elements.textModal && !elements.textModal.classList.contains('is-hidden');
+  const filterOpen =
+    elements.federationFilterModal &&
+    !elements.federationFilterModal.classList.contains('is-hidden');
+  return Boolean(textOpen || filterOpen);
+};
+
+const syncModalState = () => {
+  document.body.classList.toggle('modal-open', isAnyModalOpen());
+};
+
 const openTextModal = (title, text) => {
   if (!elements.textModal || !elements.modalBody || !elements.modalTitle) return;
   elements.modalTitle.textContent = title || '本文';
   elements.modalBody.textContent = text || '本文がありません。';
   elements.textModal.classList.remove('is-hidden');
-  document.body.classList.add('modal-open');
+  syncModalState();
 };
 
 const closeTextModal = () => {
   if (!elements.textModal) return;
   elements.textModal.classList.add('is-hidden');
-  document.body.classList.remove('modal-open');
+  syncModalState();
+};
+
+const openFilterModal = () => {
+  if (!elements.federationFilterModal) return;
+  elements.federationFilterModal.classList.remove('is-hidden');
+  if (elements.federationFilterBtn) {
+    elements.federationFilterBtn.setAttribute('aria-expanded', 'true');
+  }
+  syncModalState();
+};
+
+const closeFilterModal = () => {
+  if (!elements.federationFilterModal) return;
+  elements.federationFilterModal.classList.add('is-hidden');
+  if (elements.federationFilterBtn) {
+    elements.federationFilterBtn.setAttribute('aria-expanded', 'false');
+  }
+  syncModalState();
 };
 
 let summarySections = null;
@@ -934,8 +968,19 @@ const bindEvents = () => {
   if (elements.textModalClose) {
     elements.textModalClose.addEventListener('click', closeTextModal);
   }
+  if (elements.federationFilterBtn) {
+    elements.federationFilterBtn.addEventListener('click', openFilterModal);
+  }
+  if (elements.federationFilterBackdrop) {
+    elements.federationFilterBackdrop.addEventListener('click', closeFilterModal);
+  }
+  if (elements.federationFilterClose) {
+    elements.federationFilterClose.addEventListener('click', closeFilterModal);
+  }
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeTextModal();
+    if (event.key !== 'Escape') return;
+    closeFilterModal();
+    closeTextModal();
   });
 
   document.querySelectorAll('.pagination').forEach((pagination) => {

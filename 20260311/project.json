@@ -1,0 +1,5 @@
+{
+  "title": "さまざまな検索方法の比較",
+  "description": "あおぞら文庫を題材に、全文検索・セマンティック検索・フェデレーション・RAGを比較。",
+  "tags": ["File Search", "Federation", "RAG"]
+}

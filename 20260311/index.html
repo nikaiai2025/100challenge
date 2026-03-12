@@ -18,14 +18,19 @@
   <div class="page">
     <header class="hero">
       <div class="hero-top">
-        <h1>さまざまな検索方法の比較</h1>
+        <h1>テキストデータ検索方法の比較</h1>
         <button id="settingsToggle" class="btn ghost small" type="button" aria-expanded="false">⚙ 設定</button>
       </div>
-        <p>
-          あおぞら文庫の文字データを題材に、全文検索、セマンティック検索（Google File Search）、
-          フェデレーション検索（Google File Search＋メタデータDB）の違いを直感的に把握するための学習用サイトです。
-          それぞれの特徴は以下の通りです。
-        </p>
+      <div class="hero-links">
+        <a href="./docs/" class="hero-link">サイト構築関連資料（/docs）</a>
+        <a href="./research/" class="hero-link">事前リサーチ（/research）</a>
+        <a href="./Aozora_Texts_Preprocessed/" class="hero-link">元データ（/Aozora_Texts_Preprocessed）</a>
+      </div>
+      <p>
+        あおぞら文庫の文字データを題材に、全文検索、セマンティック検索（Google File Search）、
+        フェデレーション検索（Google File Search＋メタデータDB）の違いを直感的に把握するための学習用サイトです。
+        それぞれの特徴は以下の通り。
+      </p>
       <div class="hero-actions">
         <button class="btn ghost small" type="button" data-summary="全文検索（キーワード検索）">全文検索</button>
         <button class="btn ghost small" type="button" data-summary="セマンティック検索（Google File Search）">セマンティック検索</button>
@@ -37,7 +42,7 @@
     <section class="panel search-panel">
       <div class="panel-header">
         <h2>検索クエリ</h2>
-        <p>検索結果は3方式で同時に取得します。</p>
+        <p>検索結果は4方式で同時に取得します。</p>
       </div>
       <div class="search-grid">
         <label class="field">
@@ -160,37 +165,11 @@
               <span class="column-title">フェデレーション</span>
               <span class="column-sub">Google File Search + メタデータDB</span>
             </div>
-            <div class="column-meta" id="federationMeta">0件</div>
-          </div>
-          <div class="filters-panel embedded">
-            <div class="panel-header">
-              <h2>フェデレーション絞り込み</h2>
-              <p>メタデータDB側の条件で対象作品を絞り込み、File Search結果を突合します。</p>
-            </div>
-            <div class="filters-grid">
-              <label class="field">
-                <span>年（開始）</span>
-                <input id="yearFrom" type="number" min="0" placeholder="例: 1900" />
-              </label>
-              <label class="field">
-                <span>年（終了）</span>
-                <input id="yearTo" type="number" min="0" placeholder="例: 1950" />
-              </label>
-              <label class="field">
-                <span>著者（部分一致）</span>
-                <input id="authorFilter" type="text" placeholder="例: 夏目" />
-              </label>
-              <label class="field">
-                <span>ジャンル</span>
-                <select id="genreFilter">
-                  <option value="">指定なし</option>
-                  <option value="純文学">純文学</option>
-                  <option value="娯楽小説">娯楽小説</option>
-                  <option value="童話">童話</option>
-                  <option value="詩">詩</option>
-                  <option value="随筆">随筆</option>
-                </select>
-              </label>
+            <div class="column-actions">
+              <div class="column-meta" id="federationMeta">0件</div>
+              <button id="federationFilterBtn" class="btn ghost small" type="button" aria-expanded="false">
+                絞り込み
+              </button>
             </div>
           </div>
           <div class="pagination" id="federationPagination">
@@ -218,6 +197,45 @@
         </div>
       </div>
     </section>
+  </div>
+
+  <div class="modal is-hidden filter-modal" id="federationFilterModal" role="dialog" aria-modal="true"
+    aria-labelledby="federationFilterTitle">
+    <div class="modal-backdrop" id="federationFilterBackdrop"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="federationFilterTitle">フェデレーション絞り込み</h3>
+        <button id="federationFilterClose" class="btn ghost small" type="button">閉じる</button>
+      </div>
+      <div class="modal-body">
+        <p class="hint">メタデータDB側の条件で対象作品を絞り込み、File Search結果を突合します。</p>
+        <div class="filters-grid">
+          <label class="field">
+            <span>年（開始）</span>
+            <input id="yearFrom" type="number" min="0" placeholder="例: 1900" />
+          </label>
+          <label class="field">
+            <span>年（終了）</span>
+            <input id="yearTo" type="number" min="0" placeholder="例: 1950" />
+          </label>
+          <label class="field">
+            <span>著者（部分一致）</span>
+            <input id="authorFilter" type="text" placeholder="例: 夏目" />
+          </label>
+          <label class="field">
+            <span>ジャンル</span>
+            <select id="genreFilter">
+              <option value="">指定なし</option>
+              <option value="純文学">純文学</option>
+              <option value="娯楽小説">娯楽小説</option>
+              <option value="童話">童話</option>
+              <option value="詩">詩</option>
+              <option value="随筆">随筆</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="modal is-hidden" id="textModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
