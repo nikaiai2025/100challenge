@@ -1,0 +1,238 @@
+﻿<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>比較検索UI | Aozora 100</title>
+  <meta name="description" content="全文検索 / File Search / フェデレーション検索を並列比較するPoC UI" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-top">
+        <h1>さまざまな検索方法の比較</h1>
+        <button id="settingsToggle" class="btn ghost small" type="button" aria-expanded="false">⚙ 設定</button>
+      </div>
+        <p>
+          あおぞら文庫の文字データを題材に、全文検索、セマンティック検索（Google File Search）、
+          フェデレーション検索（Google File Search＋メタデータDB）の違いを直感的に把握するための学習用サイトです。
+          それぞれの特徴は以下の通りです。
+        </p>
+      <div class="hero-actions">
+        <button class="btn ghost small" type="button" data-summary="全文検索（キーワード検索）">全文検索</button>
+        <button class="btn ghost small" type="button" data-summary="セマンティック検索（Google File Search）">セマンティック検索</button>
+        <button class="btn ghost small" type="button" data-summary="フェデレーション検索（連合検索）">フェデレーション検索</button>
+        <button class="btn ghost small" type="button" data-summary="RAG（Retrieval-Augmented Generation）">RAG</button>
+      </div>
+    </header>
+
+    <section class="panel search-panel">
+      <div class="panel-header">
+        <h2>検索クエリ</h2>
+        <p>検索結果は3方式で同時に取得します。</p>
+      </div>
+      <div class="search-grid">
+        <label class="field">
+          <span>検索クエリ</span>
+          <input id="queryInput" type="text" placeholder="例: こころ 先生 私" autocomplete="off" />
+        </label>
+        <div class="search-actions">
+          <button id="searchBtn" class="btn primary">検索</button>
+          <button id="clearBtn" class="btn ghost">クリア</button>
+        </div>
+      </div>
+      <div class="status-row" id="globalStatus">準備完了</div>
+    </section>
+
+    <section class="panel config-panel is-hidden" id="configPanel">
+      <div class="panel-header">
+        <h2>設定 / メンテナンス</h2>
+        <p>
+          APIキーはローカルの <code>.env</code> から読み込みます。
+          File Search の事前準備（ローカル実行でStore作成）を済ませておけば、ページ上で利用できます。
+          ただし Store作成は時間がかかるため、実質的にはプログラム作成者向けのデモサイトです。
+        </p>
+      </div>
+      <div class="config-grid">
+        <div class="config-card">
+          <h3>Gemini API</h3>
+          <label class="field">
+            <span>APIキー</span>
+            <input id="geminiKey" type="password" placeholder="入力後に保存" />
+          </label>
+          <label class="field">
+            <span>モデル</span>
+            <input id="geminiModel" type="text" placeholder="例: gemini-3-flash-preview" />
+          </label>
+          <div class="field">
+            <span>GenerateContent エンドポイント</span>
+            <div class="fixed-value" id="geminiEndpointLabel">
+              https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent</div>
+          </div>
+          <div class="inline-actions">
+            <button id="saveGeminiBtn" class="btn small">保存</button>
+            <button id="clearGeminiBtn" class="btn ghost small">削除</button>
+          </div>
+          <p class="hint">モデル名は環境に合わせて調整してください。</p>
+        </div>
+
+        <div class="config-card">
+          <h3>File Search Store</h3>
+          <label class="field">
+            <span>Store ID</span>
+            <input id="storeIdInput" type="text" placeholder="例: aozora100store-xxxxxxxxxx" />
+          </label>
+          <div class="field">
+            <span>Store API Base</span>
+            <div class="fixed-value" id="storeBaseLabel">https://generativelanguage.googleapis.com/v1beta</div>
+          </div>
+          <div class="field">
+            <span>Upload Base</span>
+            <div class="fixed-value" id="uploadBaseLabel">https://generativelanguage.googleapis.com/upload/v1beta</div>
+          </div>
+          <div class="inline-actions">
+            <button id="storeStatusBtn" class="btn ghost small">状態確認</button>
+          </div>
+          <p class="hint" id="storeIdDisplay">Store ID: 未設定</p>
+          <p class="hint" id="storeStatus">未確認</p>
+          <p class="hint">ローカル実行時は <code>.store_id</code> を読み込みます。</p>
+        </div>
+
+        <div class="config-card">
+          <h3>全文検索（Pagefind）</h3>
+          <p class="hint">静的サイトに事前インデックスを生成して利用します。</p>
+          <p class="hint">ページ生成: <code>node 20260311/server/build_pagefind_site.js</code></p>
+          <p class="hint">事前生成: <code>npx -y pagefind --site 20260311</code></p>
+          <p class="hint">生成後に <code>20260311/pagefind</code> が配置されます。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="results-section">
+      <div class="results-header">
+        <h2>検索結果</h2>
+        <p>各列最大50件。ページングで表示します。</p>
+      </div>
+      <div class="results-grid">
+        <div class="result-column" data-kind="fulltext">
+          <div class="column-header">
+            <div>
+              <span class="column-title">全文検索</span>
+              <span class="column-sub">Pagefind</span>
+            </div>
+            <div class="column-meta" id="fulltextMeta">0件</div>
+          </div>
+          <div class="pagination" id="fulltextPagination">
+            <button class="btn ghost small" data-action="prev">前へ</button>
+            <span class="page-info">1 / 1</span>
+            <button class="btn ghost small" data-action="next">次へ</button>
+          </div>
+          <div class="result-list" data-results="fulltext"></div>
+        </div>
+
+        <div class="result-column" data-kind="fileSearch">
+          <div class="column-header">
+            <div>
+              <span class="column-title">セマンティック検索</span>
+              <span class="column-sub">Google File Search</span>
+            </div>
+            <div class="column-meta" id="fileSearchMeta">0件</div>
+          </div>
+          <div class="pagination" id="fileSearchPagination">
+            <button class="btn ghost small" data-action="prev">前へ</button>
+            <span class="page-info">1 / 1</span>
+            <button class="btn ghost small" data-action="next">次へ</button>
+          </div>
+          <div class="result-list" data-results="fileSearch"></div>
+        </div>
+
+        <div class="result-column" data-kind="federation">
+          <div class="column-header">
+            <div>
+              <span class="column-title">フェデレーション</span>
+              <span class="column-sub">Google File Search + メタデータDB</span>
+            </div>
+            <div class="column-meta" id="federationMeta">0件</div>
+          </div>
+          <div class="filters-panel embedded">
+            <div class="panel-header">
+              <h2>フェデレーション絞り込み</h2>
+              <p>メタデータDB側の条件で対象作品を絞り込み、File Search結果を突合します。</p>
+            </div>
+            <div class="filters-grid">
+              <label class="field">
+                <span>年（開始）</span>
+                <input id="yearFrom" type="number" min="0" placeholder="例: 1900" />
+              </label>
+              <label class="field">
+                <span>年（終了）</span>
+                <input id="yearTo" type="number" min="0" placeholder="例: 1950" />
+              </label>
+              <label class="field">
+                <span>著者（部分一致）</span>
+                <input id="authorFilter" type="text" placeholder="例: 夏目" />
+              </label>
+              <label class="field">
+                <span>ジャンル</span>
+                <select id="genreFilter">
+                  <option value="">指定なし</option>
+                  <option value="純文学">純文学</option>
+                  <option value="娯楽小説">娯楽小説</option>
+                  <option value="童話">童話</option>
+                  <option value="詩">詩</option>
+                  <option value="随筆">随筆</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div class="pagination" id="federationPagination">
+            <button class="btn ghost small" data-action="prev">前へ</button>
+            <span class="page-info">1 / 1</span>
+            <button class="btn ghost small" data-action="next">次へ</button>
+          </div>
+          <div class="result-list" data-results="federation"></div>
+        </div>
+
+        <div class="result-column" data-kind="rag">
+          <div class="column-header">
+            <div>
+              <span class="column-title">RAG回答</span>
+              <span class="column-sub">Google File Search + 生成</span>
+            </div>
+            <div class="column-meta" id="ragMeta">0件</div>
+          </div>
+          <div class="pagination" id="ragPagination">
+            <button class="btn ghost small" data-action="prev">前へ</button>
+            <span class="page-info">1 / 1</span>
+            <button class="btn ghost small" data-action="next">次へ</button>
+          </div>
+          <div class="result-list" data-results="rag"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal is-hidden" id="textModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-backdrop" id="textModalBackdrop"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle">本文</h3>
+        <button id="textModalClose" class="btn ghost small" type="button">閉じる</button>
+      </div>
+      <div class="modal-body">
+        <pre id="modalBody"></pre>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+
+</html>

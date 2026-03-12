@@ -3,4 +3,8 @@
 
 # env files
 .env*
+!.env.example
+!**/.env.example
+.store_id
+**/.store_id
 

@@ -1,0 +1,378 @@
+[
+  {
+    "path": "./Aozora_Texts_Preprocessed/「いき」の構造.txt",
+    "fileName": "「いき」の構造.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/『春と修羅』.txt",
+    "fileName": "『春と修羅』.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/あいびき.txt",
+    "fileName": "あいびき.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/あらくれ.txt",
+    "fileName": "あらくれ.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/からすうりの花と蛾.txt",
+    "fileName": "からすうりの花と蛾.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/こがね丸.txt",
+    "fileName": "こがね丸.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/こころ.txt",
+    "fileName": "こころ.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/ごん狐.txt",
+    "fileName": "ごん狐.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/たけくらべ.txt",
+    "fileName": "たけくらべ.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/どんたく.txt",
+    "fileName": "どんたく.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/はつ恋.txt",
+    "fileName": "はつ恋.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/カーライル博物館.txt",
+    "fileName": "カーライル博物館.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/シャロットの妖姫.txt",
+    "fileName": "シャロットの妖姫.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/マッチ売りの少女.txt",
+    "fileName": "マッチ売りの少女.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/ヴィヨンの妻.txt",
+    "fileName": "ヴィヨンの妻.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/一兵卒.txt",
+    "fileName": "一兵卒.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/一握の砂.txt",
+    "fileName": "一握の砂.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/人間失格.txt",
+    "fileName": "人間失格.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/佐竹の原へ大仏をこしらえたはなし.txt",
+    "fileName": "佐竹の原へ大仏をこしらえたはなし.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/優しき歌 Ⅰ・Ⅱ.txt",
+    "fileName": "優しき歌 Ⅰ・Ⅱ.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/光と風と夢.txt",
+    "fileName": "光と風と夢.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/光の中に.txt",
+    "fileName": "光の中に.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/十三夜.txt",
+    "fileName": "十三夜.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/十二支考.txt",
+    "fileName": "十二支考.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/千曲川のスケッチ.txt",
+    "fileName": "千曲川のスケッチ.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/半七捕物帳.txt",
+    "fileName": "半七捕物帳.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/南蛮寺門前.txt",
+    "fileName": "南蛮寺門前.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/古事記物語.txt",
+    "fileName": "古事記物語.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/古代国語の音韻に就いて.txt",
+    "fileName": "古代国語の音韻に就いて.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/吾輩は猫である.txt",
+    "fileName": "吾輩は猫である.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/善の研究.txt",
+    "fileName": "善の研究.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/在りし日の歌.txt",
+    "fileName": "在りし日の歌.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/地獄変.txt",
+    "fileName": "地獄変.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/外套.txt",
+    "fileName": "外套.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/夜明け前.txt",
+    "fileName": "夜明け前.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/大つごもり.txt",
+    "fileName": "大つごもり.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/大菩薩峠.txt",
+    "fileName": "大菩薩峠.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/夫婦善哉.txt",
+    "fileName": "夫婦善哉.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/学問のすすめ.txt",
+    "fileName": "学問のすすめ.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/安藤昌益.txt",
+    "fileName": "安藤昌益.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/寒山落木 巻一.txt",
+    "fileName": "寒山落木 巻一.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/小説 不如帰.txt",
+    "fileName": "小説 不如帰.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/少年探偵団.txt",
+    "fileName": "少年探偵団.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/尾崎放哉選句集.txt",
+    "fileName": "尾崎放哉選句集.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/山月記.txt",
+    "fileName": "山月記.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/山羊の歌.txt",
+    "fileName": "山羊の歌.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/巌流島.txt",
+    "fileName": "巌流島.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/幽霊塔.txt",
+    "fileName": "幽霊塔.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/怪人二十面相.txt",
+    "fileName": "怪人二十面相.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/恩讐の彼方に.txt",
+    "fileName": "恩讐の彼方に.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/斜陽.txt",
+    "fileName": "斜陽.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/日本三文オペラ.txt",
+    "fileName": "日本三文オペラ.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/杜子春.txt",
+    "fileName": "杜子春.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/楚囚之詩.txt",
+    "fileName": "楚囚之詩.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/概括的唐宋時代観.txt",
+    "fileName": "概括的唐宋時代観.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/樹木とその葉.txt",
+    "fileName": "樹木とその葉.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/機械.txt",
+    "fileName": "機械.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/檸檬.txt",
+    "fileName": "檸檬.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/母となる.txt",
+    "fileName": "母となる.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/法窓夜話.txt",
+    "fileName": "法窓夜話.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/浮浪漫語.txt",
+    "fileName": "浮浪漫語.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/海に生くる人々.txt",
+    "fileName": "海に生くる人々.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/海潮音.txt",
+    "fileName": "海潮音.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/滝口入道.txt",
+    "fileName": "滝口入道.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/獄中記.txt",
+    "fileName": "獄中記.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/瓶詰地獄.txt",
+    "fileName": "瓶詰地獄.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/生まれいずる悩み.txt",
+    "fileName": "生まれいずる悩み.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/福翁自伝.txt",
+    "fileName": "福翁自伝.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/私の書斎.txt",
+    "fileName": "私の書斎.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/竹青.txt",
+    "fileName": "竹青.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/老人.txt",
+    "fileName": "老人.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/老妓抄.txt",
+    "fileName": "老妓抄.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/舞姫.txt",
+    "fileName": "舞姫.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/草木塔.txt",
+    "fileName": "草木塔.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/草枕.txt",
+    "fileName": "草枕.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/蘇峰先生の「大正の青年と帝国の前途」を読む.txt",
+    "fileName": "蘇峰先生の「大正の青年と帝国の前途」を読む.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/蜘蛛の糸.txt",
+    "fileName": "蜘蛛の糸.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/赤蛙.txt",
+    "fileName": "赤蛙.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/走れメロス.txt",
+    "fileName": "走れメロス.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/遺書.txt",
+    "fileName": "遺書.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/野菊の墓.txt",
+    "fileName": "野菊の墓.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/銀河鉄道の夜.txt",
+    "fileName": "銀河鉄道の夜.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/長塚節歌集.txt",
+    "fileName": "長塚節歌集.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/阿部一族.txt",
+    "fileName": "阿部一族.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/雁.txt",
+    "fileName": "雁.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/雪の女王.txt",
+    "fileName": "雪の女王.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/雪中富士登山記.txt",
+    "fileName": "雪中富士登山記.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/青眼白頭.txt",
+    "fileName": "青眼白頭.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/非凡人と凡人の遺書.txt",
+    "fileName": "非凡人と凡人の遺書.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/風の又三郎.txt",
+    "fileName": "風の又三郎.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/高瀬舟.txt",
+    "fileName": "高瀬舟.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/高野聖.txt",
+    "fileName": "高野聖.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/魚の憂鬱.txt",
+    "fileName": "魚の憂鬱.txt"
+  },
+  {
+    "path": "./Aozora_Texts_Preprocessed/鼻.txt",
+    "fileName": "鼻.txt"
+  }
+]
