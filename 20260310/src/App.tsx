@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { PROVIDERS } from './api/providers';
 import { runModel, ApiResult, getModels } from './api/client';
 
@@ -130,15 +130,7 @@ function App() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Source Code
-            </a>
-            <a
-              className="btn btn-outline link-button"
-              href="./docs/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              調査資料（参考）
+              ソースコード
             </a>
             <button className="btn btn-outline" onClick={() => setIsModalOpen(true)}>
               Key Registration (BYOK)
@@ -352,3 +344,4 @@ function ByokModal({
 }
 
 export default App;
+
