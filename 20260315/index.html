@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5ch専用ブラウザ(ChMate)対応で踏んだ落とし穴と対策</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f5f7; --surface: #ffffff; --border: #e5e5e7;
+      --text: #1d1d1f; --muted: #6e6e73; --radius: 14px;
+    }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg); color: var(--text); min-height: 100vh;
+    }
+    .container { max-width: 760px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+    .back { font-size: 0.85rem; color: var(--muted); text-decoration: none; display: inline-block; margin-bottom: 2rem; }
+    .back:hover { color: var(--text); }
+    article { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.5rem; box-shadow: 0 10px 22px rgba(0,0,0,0.04); }
+    h1 { font-size: 1.8rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.75rem; }
+    h2 { font-size: 1.3rem; font-weight: 700; margin: 2rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
+    p { margin: 0.6rem 0; line-height: 1.8; font-size: 0.95rem; }
+    blockquote { border-left: 3px solid var(--border); padding-left: 1rem; color: var(--muted); margin: 1rem 0; font-size: 0.95rem; }
+    ul, ol { margin: 0.6rem 0 0.6rem 1.4rem; display: flex; flex-direction: column; gap: 0.3rem; }
+    li { line-height: 1.7; font-size: 0.95rem; }
+    a { color: #0066cc; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    code { background: #f2f2f4; padding: 0.15rem 0.4rem; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; }
+    pre { background: #0f172a; color: #f8fafc; padding: 1rem 1.2rem; border-radius: 12px; overflow: auto; margin: 0.8rem 0; line-height: 1.5; }
+    pre code { background: transparent; padding: 0; color: inherit; font-size: 0.85rem; }
+    table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
+    th { background: #f9f9fb; font-weight: 600; }
+    strong { font-weight: 700; }
+    .date { font-size: 0.8rem; color: var(--muted); font-weight: 600; margin-bottom: 0.5rem; }
+    footer { margin-top: 3rem; text-align: center; font-size: 0.8rem; color: var(--muted); }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <a class="back" href="../">&larr; Back to index</a>
+    <article>
+      <p class="date">2026-03-15</p>
+      <h1>5ch専用ブラウザ(ChMate)対応で踏んだ落とし穴と対策</h1>
+      <blockquote>5chライクな掲示板をゼロから開発し、ChMate等の専用ブラウザ（専ブラ）で読み書きできるようにする過程で遭遇した問題と解決策をまとめる。</blockquote>
+
+      <h2>想定読者</h2>
+      <ul>
+        <li>匿名掲示板・5ch互換掲示板を自作している開発者</li>
+        <li>Next.js / Cloudflare Workers / Vercel 等のモダンスタックで5chプロトコル互換APIを実装しようとしている人</li>
+        <li>ChMateで動かない原因が分からず困っている人</li>
+      </ul>
+
+      <h2>参考実装</h2>
+      <p>調査にあたり <a href="https://github.com/edginer/eddist">eddist</a>（Rust製の5ch互換掲示板エンジン）のソースコードを繰り返し参照した。ChMateで実運用されている実績があり、「なぜこう書いているのか」自体が専ブラ互換のナレッジとして極めて有用。</p>
+
+      <hr>
+
+      <h2>1. ChMateはHTTP:80で通信する</h2>
+
+      <h3>症状</h3>
+      <ul>
+        <li>bbsmenuは登録できるのに、スレッド一覧が読み込めない</li>
+        <li>Siki（PC専ブラ）では正常動作するのにChMateだけ動かない</li>
+      </ul>
+
+      <h3>原因</h3>
+      <p>ChMateは2つのHTTPクライアントを使い分けている:</p>
+      <table>
+        <tr><th>機能</th><th>通信方式</th><th>ポート</th></tr>
+        <tr><td>bbsmenu取得</td><td>WebView (HTTPS)</td><td>443</td></tr>
+        <tr><td>subject.txt / DAT / bbs.cgi</td><td>Raw HTTPクライアント</td><td><strong>80</strong></td></tr>
+      </table>
+      <p><strong>VercelはHTTP:80を308でHTTPSにリダイレクトする。ChMateはこのリダイレクトに追従できない。</strong> Vercelの設定で無効化する手段はない。</p>
+
+      <h3>確認方法</h3>
+      <p>Android端末にmitmproxyを設定し、ChMateの通信をパケットキャプチャして確定診断した。</p>
+
+      <h3>対策</h3>
+      <ul>
+        <li><strong>Cloudflare Workers/Pagesに移行し、「Always Use HTTPS」をOFFにする</strong></li>
+        <li>ホスティング選定時に「HTTP:80リクエストに直接応答できるか」を必須要件にする</li>
+        <li>Vercelでは解決不可能。Cloudflare Proxy経由も非推奨構成になるためリスクが高い</li>
+      </ul>
+
+      <hr>
+
+      <h2>2. Set-CookieにSecure / SameSiteを付けてはいけない</h2>
+
+      <h3>症状</h3>
+      <ul>
+        <li>認証（write_token方式）は成功する</li>
+        <li>直後の書き込みで再び認証を要求される</li>
+        <li>何度やっても毎回認証になる</li>
+      </ul>
+
+      <h3>原因</h3>
+      <p>bbs.cgiのレスポンスで <code>Set-Cookie: edge-token=xxx; HttpOnly; Secure; SameSite=Lax</code> を返していた。</p>
+      <p><strong>ChMateは<code>Secure</code>属性が付いたCookieを保存しない。</strong> <code>SameSite</code>も同様。一般的なWebセキュリティのベストプラクティスだが、専ブラのHTTPクライアント実装と互換性がない。</p>
+
+      <h3>確認方法</h3>
+      <p>bbs.cgiに診断ログを6箇所追加し、<code>wrangler tail</code> でリアルタイム確認:</p>
+      <pre><code>POST /test/bbs.cgi  (write_tokenで書き込み成功、Set-Cookie発行)
+  [bbs.cgi] Setting edge-token cookie: 0e6f10f0...
+
+POST /test/bbs.cgi  (直後の再書き込み)
+  [bbs.cgi] Cookie header: (absent)    &larr; Cookieが送信されていない</code></pre>
+      <p><code>SameSite=None; Secure</code> に変えても同じ。属性を両方削除して初めてCookieが保存された。</p>
+
+      <h3>対策</h3>
+      <pre><code>Set-Cookie: edge-token=xxx; HttpOnly; Max-Age=31536000; Path=/</code></pre>
+      <ul>
+        <li><code>Secure</code> &rarr; 削除</li>
+        <li><code>SameSite</code> &rarr; 削除</li>
+        <li><code>HttpOnly</code> &rarr; 残す</li>
+        <li><code>Path=/</code> &rarr; 残す</li>
+      </ul>
+      <p>eddistも同じ構成（<code>Secure</code> / <code>SameSite</code>を意図的に未設定）。</p>
+
+      <hr>
+
+      <h2>3. Shift_JISエンコードで絵文字が消える</h2>
+
+      <h3>症状</h3>
+      <ul>
+        <li>ユーザーが投稿した絵文字が「？」に化ける</li>
+        <li>eddistでは絵文字が表示されるのに、自前実装では消失する</li>
+      </ul>
+
+      <h3>原因</h3>
+      <p>5chプロトコルのDATファイルはShift_JIS（CP932）エンコード。CP932の文字集合に絵文字は含まれない。</p>
+      <p>自前実装ではCP932非対応文字を全角「？」に置換していたため、情報が不可逆に消失。</p>
+
+      <h3>eddistの方式</h3>
+      <p>eddistは <code>encoding_rs</code> クレート（WHATWGエンコーディング仕様準拠）を使用。CP932非対応文字は自動的にHTML数値参照に変換される:</p>
+      <pre><code>&#x1F605; &rarr; &amp;#128517;</code></pre>
+      <p>HTML数値参照はASCII文字のみで構成されるため、Shift_JISエンコードを問題なく通過する。専ブラはDAT本文をHTMLとして解釈するので、<code>&amp;#128517;</code> は絵文字として表示される。</p>
+
+      <h3>対策</h3>
+      <p>Shift_JIS変換のフォールバック処理を変更:</p>
+      <pre><code>// NG: 情報消失
+CP932非対応文字 &rarr; 全角？
+
+// OK: HTML数値参照で保持
+CP932非対応文字 &rarr; &amp;#コードポイント;</code></pre>
+
+      <h3>追加の罠: 異体字セレクタ</h3>
+      <p>&#x1F573;&#xFE0F; のような絵文字は <code>U+1F573</code>（穴）+ <code>U+FE0F</code>（異体字セレクタ）の2文字構成。eddistの方式でも <code>U+FE0F</code> が <code>&amp;#65039;</code> に変換され、専ブラで文字化けマークとして表示される。</p>
+      <p><code>U+FE0F</code>（絵文字スタイル指示）と <code>U+FE0E</code>（テキストスタイル指示）は表示ヒントであり、Shift_JIS/DATの文脈では不要なので<strong>除去する</strong>のが正解。一方、<code>U+200D</code>（ZWJ: ゼロ幅接合子）は結合絵文字の構成要素なので除去してはいけない。</p>
+      <table>
+        <tr><th>文字</th><th>処理</th><th>理由</th></tr>
+        <tr><td>U+FE0F (VS16)</td><td>除去</td><td>表示指示。なくても絵文字は表示される</td></tr>
+        <tr><td>U+FE0E (VS15)</td><td>除去</td><td>同上</td></tr>
+        <tr><td>U+200D (ZWJ)</td><td>HTML数値参照で保持</td><td>&#x1F468;&#x200D;&#x1F469;&#x200D;&#x1F467; 等の結合に必要</td></tr>
+      </table>
+
+      <hr>
+
+      <h2>4. 専ブラが想定するURL体系</h2>
+
+      <h3>症状</h3>
+      <ul>
+        <li>スレッドURLをコピーすると <code>test/read.cgi/battleboard/...</code> になり、ブラウザで開けない</li>
+        <li>板URL <code>/battleboard/</code> が404になる</li>
+        <li><code>/kako/</code> へのアクセスが飛んでくる</li>
+      </ul>
+
+      <h3>原因</h3>
+      <p>専ブラは5chのURL体系に基づいてURLを自動構築する:</p>
+      <table>
+        <tr><th>用途</th><th>専ブラが構築するURL</th></tr>
+        <tr><td>板トップ</td><td><code>/{板ID}/</code></td></tr>
+        <tr><td>スレッド閲覧</td><td><code>/test/read.cgi/{板ID}/{スレッドキー}/</code></td></tr>
+        <tr><td>DAT取得</td><td><code>/{板ID}/dat/{スレッドキー}.dat</code></td></tr>
+        <tr><td>過去ログ</td><td><code>/{板ID}/kako/{下位ディレクトリ}/{スレッドキー}.dat</code></td></tr>
+      </table>
+      <p>DAT取得は実装済みでも、それ以外のURLにルートがないと不便な動作になる。</p>
+
+      <h3>対策</h3>
+      <ul>
+        <li><code>/test/read.cgi/{板ID}/{スレッドキー}/</code> &rarr; Web UIのスレッドページにリダイレクト</li>
+        <li><code>/{板ID}/</code> &rarr; Web UIのスレッド一覧にリダイレクト</li>
+        <li><code>/kako/</code> &rarr; 未実装なら404で良いが、専ブラが解釈可能な形式で返す</li>
+      </ul>
+      <p>専ブラ固有フォーマットが必要なエンドポイント（DAT、subject.txt等）以外はWeb UIにフォールバックするのが保守コスト的に合理的。</p>
+
+      <hr>
+
+      <h2>まとめ: 専ブラ対応チェックリスト</h2>
+      <ul>
+        <li>ホスティング環境がHTTP:80に直接応答できるか（Vercelは不可）</li>
+        <li>Set-Cookieに<code>Secure</code> / <code>SameSite</code>を付けていないか</li>
+        <li>Shift_JIS非対応文字をHTML数値参照に変換しているか</li>
+        <li>異体字セレクタ(U+FE0F/U+FE0E)を除去しているか</li>
+        <li>ZWJ(U+200D)を保持しているか</li>
+        <li>read.cgi / 板トップ / kako のURLにルートがあるか</li>
+        <li>bbs.cgiのレスポンスHTMLがShift_JISで返されているか</li>
+        <li>レスポンスのtitleタグが専ブラの成否判定に使える形式か</li>
+      </ul>
+      <p>eddistのソースコードは専ブラ互換性の暗黙知の宝庫。迷ったらeddistと差分比較するのが最も確実な調査手段。</p>
+    </article>
+
+    <footer>
+      <p>Built with curiosity &middot; 2026</p>
+    </footer>
+  </div>
+</body>
+
+</html>
