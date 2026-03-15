@@ -490,9 +490,16 @@
       return html.join('');
     };
 
+    const dedent = (text) => {
+      const lines = text.split('\n');
+      const indents = lines.filter((l) => l.trim()).map((l) => l.match(/^(\s*)/)[1].length);
+      const min = Math.min(...indents);
+      return min > 0 ? lines.map((l) => l.slice(min)).join('\n') : text;
+    };
+
     const openModal = (title, markdown) => {
       modalTitle.textContent = title || 'コメント';
-      const md = markdown.trim();
+      const md = dedent(markdown.trim());
       modalBody.innerHTML = md ? renderMarkdown(md) : '<p>コメントがありません。</p>';
       modal.classList.remove('is-hidden');
       document.body.classList.add('modal-open');
