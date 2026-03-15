@@ -1,0 +1,60 @@
+{
+  "characters": [
+    {
+      "id": "sensei",
+      "name": "先生",
+      "work": "こころ",
+      "author": "夏目漱石",
+      "promptFile": "prompts/sensei.md",
+      "textFile": "texts/kokoro.txt"
+    },
+    {
+      "id": "yozo",
+      "name": "大庭葉藏",
+      "work": "人間失格",
+      "author": "太宰治",
+      "promptFile": "prompts/yozo.md",
+      "textFile": "texts/ningen_shikkaku.txt"
+    },
+    {
+      "id": "wagahai",
+      "name": "吾輩",
+      "work": "吾輩は猫である",
+      "author": "夏目漱石",
+      "promptFile": "prompts/wagahai.md",
+      "textFile": "texts/wagahai.txt",
+      "warning": "大容量のため応答に時間がかかる場合があります"
+    },
+    {
+      "id": "richo",
+      "name": "李徴",
+      "work": "山月記",
+      "author": "中島敦",
+      "promptFile": "prompts/richo.md",
+      "textFile": "texts/sangetsuki.txt"
+    },
+    {
+      "id": "nijumenso",
+      "name": "怪人二十面相",
+      "work": "怪人二十面相",
+      "author": "江戸川乱歩",
+      "promptFile": "prompts/nijumenso.md",
+      "textFile": "texts/kaijin.txt"
+    },
+    {
+      "id": "melos",
+      "name": "メロス",
+      "work": "走れメロス",
+      "author": "太宰治",
+      "promptFile": "prompts/melos.md",
+      "textFile": "texts/melos.txt"
+    }
+  ],
+  "templates": [
+    "この作品を要約してください",
+    "一番盛り上がるシーンはどこですか？",
+    "物語のオチについて、あなたはどう思いますか？",
+    "もしあなたが現代に生きていたら、どんな生活を送りますか？",
+    "作中の他の登場人物について、率直な意見を聞かせてください"
+  ]
+}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文豪キャラクター対話</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- marked.js: Markdownレンダリング -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+  <!-- DOMPurify: XSS対策 -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="site-title">文豪キャラクター対話</h1>
+    <p class="site-subtitle">近代文学の名作キャラクターと語らう</p>
+  </header>
+
+  <main class="main-content">
+
+    <!-- APIキー設定パネル -->
+    <section id="api-key-section" class="card api-key-card" aria-label="APIキー設定">
+      <h2 class="card-title">Gemini APIキー設定</h2>
+      <p class="api-key-notice">
+        このアプリはGoogleのGemini APIを使用します。
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a>
+        でAPIキーを取得してください。キーはお使いのブラウザにのみ保存され、外部に送信されることはありません。
+      </p>
+      <div class="api-key-input-row">
+        <input
+          type="password"
+          id="api-key-input"
+          class="api-key-input"
+          placeholder="AIzaSy..."
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Gemini APIキー"
+        >
+        <button id="save-api-key-btn" class="btn btn-primary" type="button">保存</button>
+        <button id="clear-api-key-btn" class="btn btn-secondary" type="button">削除</button>
+      </div>
+      <p id="api-key-status" class="api-key-status" aria-live="polite"></p>
+    </section>
+
+    <!-- キャラクター・作品選択パネル -->
+    <section class="card" aria-label="キャラクターと作品の選択">
+      <h2 class="card-title">キャラクターと作品を選ぶ</h2>
+
+      <div class="select-row">
+        <div class="select-group">
+          <label for="character-select" class="select-label">人格（キャラクター）</label>
+          <select id="character-select" class="select-control" aria-label="キャラクター選択">
+            <option value="">-- 選択してください --</option>
+          </select>
+        </div>
+
+        <div class="select-group">
+          <label for="work-select" class="select-label">読ませる作品</label>
+          <select id="work-select" class="select-control" aria-label="作品選択">
+            <option value="">-- 選択してください --</option>
+          </select>
+          <p id="work-warning" class="work-warning" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- クエリ入力パネル -->
+    <section class="card" aria-label="質問の入力">
+      <h2 class="card-title">質問する</h2>
+
+      <div class="template-row">
+        <label for="template-select" class="select-label">テンプレートから選ぶ</label>
+        <select id="template-select" class="select-control" aria-label="クエリテンプレート選択">
+          <option value="">-- テンプレートを選択 --</option>
+        </select>
+      </div>
+
+      <label for="query-textarea" class="select-label">質問文</label>
+      <textarea
+        id="query-textarea"
+        class="query-textarea"
+        rows="4"
+        placeholder="キャラクターへの質問を入力してください..."
+        aria-label="質問文入力"
+      ></textarea>
+
+      <div class="submit-row">
+        <button id="submit-btn" class="btn btn-submit" type="button" disabled>送信</button>
+        <span id="loading-indicator" class="loading-indicator" aria-live="polite" hidden>
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          応答中...
+        </span>
+      </div>
+    </section>
+
+    <!-- エラー表示 -->
+    <div id="error-message" class="error-message" role="alert" aria-live="assertive" hidden></div>
+
+    <!-- 結果表示パネル -->
+    <section id="result-section" class="card result-card" aria-label="回答" hidden>
+      <h2 class="card-title">回答</h2>
+      <div id="result-meta" class="result-meta"></div>
+      <div id="result-content" class="result-content markdown-body"></div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>作品テキストはすべて青空文庫より。Gemini API を使用しています。</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

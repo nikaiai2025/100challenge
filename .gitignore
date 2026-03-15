@@ -1,5 +1,15 @@
 
+# venv
+.venv/
+**/.venv/
 
+# pycache
+__pycache__/
+**/__pycache__/
+
+# old / trash
+**/old/
+**/ゴミ箱/
 
 # env files
 .env*
