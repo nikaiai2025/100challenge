@@ -15,7 +15,7 @@
 
 /** Gemini API エンドポイント（ストリーミング） */
 const GEMINI_ENDPOINT =
-	"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse&key=";
+	"https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:streamGenerateContent?alt=sse&key=";
 
 /** localStorage に保存するキー */
 const STORAGE_KEY_API = "gemini_api_key";
