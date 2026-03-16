@@ -23,7 +23,8 @@ const STORAGE_KEY_API = "gemini_api_key";
 /** systemInstruction に付加する共通指示 */
 const SYSTEM_INSTRUCTION_SUFFIX = `
 
-回答はマークダウン形式で記述してください。前振りや挨拶は不要です。質問に対して直接回答してください。あなたはキャラクターとして振る舞い、キャラクターの口調・価値観で回答してください。`;
+回答はマークダウン形式で記述してください。前振りや挨拶は不要です。質問に対して直接回答してください。あなたはキャラクターとして振る舞い、キャラクターの口調・価値観で回答してください。
+Web検索は使用せず、与えられた小説文章をデータソースとして回答してください。`;
 
 /* ===================================================
    アプリケーション状態
@@ -217,13 +218,6 @@ function populateTemplateSelect(templates) {
  * キャラクター変更時: 対応する作品を自動選択し、warning を表示する
  */
 function onCharacterChange() {
-	const charId = elCharacterSelect.value;
-	if (!charId || !worksData) return;
-
-	// 対応する作品を自動選択
-	elWorkSelect.value = charId;
-	onWorkChange();
-
 	updateSubmitState();
 }
 
@@ -261,11 +255,9 @@ function onTemplateChange() {
 function updateSubmitState() {
 	const hasApiKey = !!localStorage.getItem(STORAGE_KEY_API);
 	const hasChar = !!elCharacterSelect?.value;
-	const hasWork = !!elWorkSelect?.value;
 	const hasQuery = !!elQueryTextarea?.value.trim();
 	if (elSubmitBtn) {
-		elSubmitBtn.disabled =
-			!(hasApiKey && hasChar && hasWork && hasQuery) || isStreaming;
+		elSubmitBtn.disabled = !(hasApiKey && hasChar && hasQuery) || isStreaming;
 	}
 }
 
@@ -304,34 +296,37 @@ async function onSubmit() {
 		showError("キャラクターを選択してください。");
 		return;
 	}
-	if (!workId) {
-		showError("作品を選択してください。");
-		return;
-	}
 	if (!queryText) {
 		showError("質問文を入力してください。");
 		return;
 	}
 
 	const character = worksData.characters.find((c) => c.id === charId);
-	const workChar = worksData.characters.find((c) => c.id === workId);
+	const isFreeChat = !workId || workId === "__none__";
+	const workChar = isFreeChat
+		? null
+		: worksData.characters.find((c) => c.id === workId);
 
-	if (!character || !workChar) {
-		showError("選択したキャラクターまたは作品の情報が見つかりません。");
+	if (!character) {
+		showError("選択したキャラクターの情報が見つかりません。");
+		return;
+	}
+	if (!isFreeChat && !workChar) {
+		showError("選択した作品の情報が見つかりません。");
 		return;
 	}
 
 	setStreaming(true);
 
 	try {
-		// 人格プロンプトと作品テキストを並行取得
-		const [promptText, workText] = await Promise.all([
-			fetchText(character.promptFile),
-			fetchText(workChar.textFile),
-		]);
+		// 人格プロンプトを取得（作品テキストは自由対話モードなら不要）
+		const promptText = await fetchText(character.promptFile);
+		const workText = isFreeChat ? null : await fetchText(workChar.textFile);
 
 		// メタ情報を表示
-		elResultMeta.textContent = `人格: ${character.name}（${character.work}）　読む作品: ${workChar.work}（${workChar.author}）`;
+		elResultMeta.textContent = isFreeChat
+			? `人格: ${character.name}（${character.work}）　モード: 自由対話`
+			: `人格: ${character.name}（${character.work}）　読む作品: ${workChar.work}（${workChar.author}）`;
 		elResultSection.hidden = false;
 		elResultSection.scrollIntoView({ behavior: "smooth", block: "start" });
 
@@ -368,7 +363,9 @@ async function streamGeminiResponse(apiKey, promptText, workText, userQuery) {
 				role: "user",
 				parts: [
 					{
-						text: `以下は作品の全文です。\n\n---\n${workText}\n---\n\n質問: ${userQuery}`,
+						text: workText
+							? `以下は作品の全文です。\n\n---\n${workText}\n---\n\n質問: ${userQuery}`
+							: userQuery,
 					},
 				],
 			},
