@@ -516,7 +516,7 @@
         const templateId = btn.dataset.commentId;
         const title = btn.dataset.commentTitle || 'コメント';
         const template = document.getElementById(templateId);
-        const markdown = template ? template.innerHTML : '';
+        const markdown = template ? template.content.textContent : '';
         openModal(title, markdown);
       });
     });
