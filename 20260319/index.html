@@ -36,6 +36,10 @@
     .back { display: inline-block; margin-bottom: 1.5rem; font-size: .85rem; color: var(--muted); text-decoration: none; }
     .back:hover { color: var(--text); }
     .diagram { background: #f9f9fb; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin: 1rem 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .82rem; line-height: 1.8; white-space: pre; overflow-x: auto; }
+    .raw-btn { display: inline-block; margin-top: .75rem; font-size: .78rem; font-weight: 600; padding: .3rem .7rem; border-radius: 999px; border: 1px solid var(--border); background: #f9f9fb; color: var(--muted); cursor: pointer; transition: all .2s; }
+    .raw-btn:hover { border-color: var(--text); color: var(--text); }
+    .raw-box { display: none; margin-top: .75rem; background: #0f172a; color: #f8fafc; padding: 1rem 1.25rem; border-radius: 12px; overflow: auto; max-height: 60vh; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .82rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+    .raw-box.is-open { display: block; }
   </style>
 </head>
 
@@ -205,6 +209,8 @@ maxTurns: 5
         <li>チーム開発における暗黙知の補完（機械可読なドキュメントとして常に最新）</li>
       </ul>
       <p><strong>先制回答:</strong> 小規模でもコアロジックにはテストを書く習慣が将来の拡張に備えた合理的判断。テストなしの手動確認・障害対応コストを定量比較すれば投資は正当化される。</p>
+      <button class="raw-btn" data-raw="raw-pro-claude">原文を表示</button>
+      <div class="raw-box" id="raw-pro-claude"></div>
     </div>
   </details>
 
@@ -219,6 +225,8 @@ maxTurns: 5
         <li>安全なリファクタリングと継続的な機能進化の実現</li>
         <li>「動く仕様書」としての役割とチームの意思疎通</li>
       </ul>
+      <button class="raw-btn" data-raw="raw-pro-gemini">原文を表示</button>
+      <div class="raw-box" id="raw-pro-gemini"></div>
     </div>
   </details>
 
@@ -234,6 +242,8 @@ maxTurns: 5
         <li>仕様理解とチーム開発を支える（正常系・異常系・境界条件の共有）</li>
         <li>属人化防止（担当者退職後の保守不能リスク）— <em>Codex独自の視点</em></li>
       </ul>
+      <button class="raw-btn" data-raw="raw-pro-codex">原文を表示</button>
+      <div class="raw-box" id="raw-pro-codex"></div>
     </div>
   </details>
 
@@ -250,6 +260,8 @@ maxTurns: 5
         <li>本番トラフィックを用いた観測型品質保証の台頭（Netflix・Amazon）</li>
       </ul>
       <p><strong>先制回答:</strong> 品質保証はテスト以外の手段の組み合わせで達成可能。テスト整備は安定フェーズ以降でも合理的。</p>
+      <button class="raw-btn" data-raw="raw-con-claude">原文を表示</button>
+      <div class="raw-box" id="raw-con-claude"></div>
     </div>
   </details>
 
@@ -264,6 +276,8 @@ maxTurns: 5
         <li>「テスト＝品質」という誤認と心理的油断</li>
         <li>現代的な型システムと静的解析による代替</li>
       </ul>
+      <button class="raw-btn" data-raw="raw-con-gemini">原文を表示</button>
+      <div class="raw-box" id="raw-con-gemini"></div>
     </div>
   </details>
 
@@ -279,6 +293,8 @@ maxTurns: 5
         <li>実運用での価値がテスト有無より重要（段階的公開・ログ監視・素早い修正体制）</li>
         <li>テストがあっても品質は保証されず、過信は危険</li>
       </ul>
+      <button class="raw-btn" data-raw="raw-con-codex">原文を表示</button>
+      <div class="raw-box" id="raw-con-codex"></div>
     </div>
   </details>
 
@@ -301,6 +317,8 @@ maxTurns: 5
         <li><strong>Codex独自:</strong> 属人化リスクとしての視点 / 業務ドメイン固有の具体例（ECサイト・金融系）</li>
       </ul>
       <p><strong>強度評価:</strong> 複数の独立した軸から一貫して同一結論を支持。ただし反論耐性の厚みにばらつきあり。</p>
+      <button class="raw-btn" data-raw="raw-pro-summary">原文を表示</button>
+      <div class="raw-box" id="raw-pro-summary"></div>
     </div>
   </details>
 
@@ -322,6 +340,8 @@ maxTurns: 5
         <li><strong>Codex独自:</strong> 社内限定ツールという地味だが現実的なユースケース / SQL制約・ORM等のインフラ層による品質担保</li>
       </ul>
       <p><strong>強度評価:</strong> 「無条件の必須論への反証」という抑制的立場は堅固だが、ミッションクリティカル領域への言及が薄く適用範囲の限界が不明確。</p>
+      <button class="raw-btn" data-raw="raw-con-summary">原文を表示</button>
+      <div class="raw-box" id="raw-con-summary"></div>
     </div>
   </details>
 
@@ -358,8 +378,56 @@ maxTurns: 5
       <li><strong>ドメイン別のリスク分析の欠如</strong> — ミッションクリティカル領域と低リスク領域では必要性が質的に異なる</li>
       <li><strong>テストの「書き方」の品質が議論されていない</strong> — テストの要否ではなくテスト設計の巧拙の問題が混在</li>
     </ol>
+    <button class="raw-btn" data-raw="raw-final-report">原文を表示</button>
+    <div class="raw-box" id="raw-final-report"></div>
   </div>
 
 </div>
+
+<script>
+  const RAW_FILES = {
+    'raw-pro-claude':   'debate_20260319_053330/1_claims/pro_claude.md',
+    'raw-pro-gemini':   'debate_20260319_053330/1_claims/pro_gemini.md',
+    'raw-pro-codex':    'debate_20260319_053330/1_claims/pro_codex.md',
+    'raw-con-claude':   'debate_20260319_053330/1_claims/con_claude.md',
+    'raw-con-gemini':   'debate_20260319_053330/1_claims/con_gemini.md',
+    'raw-con-codex':    'debate_20260319_053330/1_claims/con_codex.md',
+    'raw-pro-summary':  'debate_20260319_053330/2_summaries/pro_summary.md',
+    'raw-con-summary':  'debate_20260319_053330/2_summaries/con_summary.md',
+    'raw-final-report': 'debate_20260319_053330/3_report/final_report.md',
+  };
+
+  document.querySelectorAll('.raw-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = btn.getAttribute('data-raw');
+      var box = document.getElementById(id);
+      if (box.classList.contains('is-open')) {
+        box.classList.remove('is-open');
+        btn.textContent = '原文を表示';
+        return;
+      }
+      if (box.textContent) {
+        box.classList.add('is-open');
+        btn.textContent = '原文を閉じる';
+        return;
+      }
+      var file = RAW_FILES[id];
+      if (!file) return;
+      btn.textContent = '読み込み中...';
+      fetch(file)
+        .then(function(r) { return r.text(); })
+        .then(function(text) {
+          box.textContent = text;
+          box.classList.add('is-open');
+          btn.textContent = '原文を閉じる';
+        })
+        .catch(function() {
+          box.textContent = '(ファイルの読み込みに失敗しました)';
+          box.classList.add('is-open');
+          btn.textContent = '原文を閉じる';
+        });
+    });
+  });
+</script>
 </body>
 </html>

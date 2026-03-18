@@ -2,7 +2,7 @@
 name: summarizer
 description: 討論の要約者。同一立場の3ファイルを読み、共通主張と独自洞察を分離して出力する。
 tools: Read, Write
-model: sonnet
+model: opus
 maxTurns: 8
 ---
 

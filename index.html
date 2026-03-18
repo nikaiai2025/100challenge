@@ -279,7 +279,23 @@
         <span class="card-tag">Claude Code / Gemini CLI / Codex CLI / Multi-Agent</span>
         <div class="card-actions">
           <a class="btn" href="./20260319/">開く</a>
+          <button class="btn ghost comment-btn" type="button" data-comment-id="comment-20260319"
+            data-comment-title="2026-03-19 コメント">コメント</button>
         </div>
+        <template id="comment-20260319">
+          ## 2026-03-19 メモ
+          - 0318で調査したCLI三者討論フレームワークを発展させ、Claude Codeのスキル/エージェント定義として実装した。
+          - Claude Code（`.claude/skills/`, `.claude/agents/`）の最新仕様に準拠。フロントマター付きSKILL.md / AGENT.md形式。
+          - 6体のAI（Claude×2, Gemini CLI×2, Codex CLI×2）が賛成/反対に分かれて独立に主張を書き出し、要約AI→審判AIで段階的に集約する。
+          - オーケストレーターが中間ファイルを読まない設計にすることで、要約・審判のバイアスを排除。
+          - テーマ「ソフトウェア開発においてテストは本当に必要か」で実行サンプルを取得済み。
+          - 審判の止揚的結論：「テストが必要か否か」ではなく「品質保証のコストをどの時点・どの手段に配分するのが最適か」という資源配分問題として捉えるべき。
+
+          ## 技術的メモ
+          - Gemini/Codex CLIはBashツール経由で呼び出し。プロンプトは一時ファイル経由（シェルエスケープ問題の回避）。
+          - Claude討論者はAgentツール（サブエージェント）で起動。Read/Writeツールにアクセス可能。
+          - 全エージェントのモデルをOpusに統一。
+        </template>
       </article>
 
       <article class="card">
