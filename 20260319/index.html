@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>マルチAI討論システム</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f5f7; --surface: #fff; --border: #e5e5e7;
+      --text: #1d1d1f; --muted: #6e6e73;
+      --radius: 14px; --shadow: 0 12px 32px rgba(0,0,0,0.06);
+    }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    .container { max-width: 820px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: .5rem; }
+    .subtitle { color: var(--muted); margin-bottom: 2.5rem; }
+    h2 { font-size: 1.25rem; font-weight: 700; margin: 2.5rem 0 .75rem; border-bottom: 1px solid var(--border); padding-bottom: .4rem; }
+    h3 { font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 .5rem; }
+    p, li { font-size: .95rem; }
+    ul, ol { margin: .5rem 0 .5rem 1.5rem; }
+    li { margin-bottom: .3rem; }
+    code { background: #f2f2f4; padding: .1rem .35rem; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em; }
+    pre { background: #0f172a; color: #f8fafc; padding: 1rem 1.25rem; border-radius: 12px; overflow-x: auto; margin: .75rem 0 1.25rem; line-height: 1.55; }
+    pre code { background: transparent; padding: 0; color: inherit; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; box-shadow: var(--shadow); margin: 1rem 0; }
+    .card h3 { margin-top: 0; }
+    table { width: 100%; border-collapse: collapse; margin: .75rem 0 1.25rem; font-size: .9rem; }
+    th, td { border: 1px solid var(--border); padding: .5rem .75rem; text-align: left; }
+    th { background: #f9f9fb; font-weight: 600; }
+    .tag { display: inline-block; font-size: .72rem; font-weight: 600; padding: .2rem .55rem; border-radius: 999px; background: #f2f2f4; color: var(--muted); margin-right: .3rem; }
+    .back { display: inline-block; margin-bottom: 1.5rem; font-size: .85rem; color: var(--muted); text-decoration: none; }
+    .back:hover { color: var(--text); }
+    .diagram { background: #f9f9fb; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin: 1rem 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .82rem; line-height: 1.8; white-space: pre; overflow-x: auto; }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <a class="back" href="../">&larr; 100 Challenge</a>
+  <h1>マルチAI討論システム</h1>
+  <p class="subtitle">Claude Code スラッシュコマンドで6体のAIエージェントが討論し、止揚的結論を導く</p>
+
+  <h2>1. 概要</h2>
+  <p><a href="../20260318/">前日（0318）のCLI三者討論フレームワーク</a>を発展させ、Claude Codeのスラッシュコマンド＋サブエージェント機能で実際に動作するマルチAI討論システムを設計した。</p>
+  <ul>
+    <li>3つのAI CLI（Claude Code / Gemini CLI / Codex CLI）を各2体ずつ、賛成・反対の立場で起動</li>
+    <li>各AIは独立してMarkdownファイルに主張を書き出す（直接対話しない）</li>
+    <li>要約AI → 審判AIと段階的に集約し、最終的に止揚（Aufheben）的結論を出力</li>
+  </ul>
+
+  <h2>2. アーキテクチャ</h2>
+  <div class="diagram">Phase 0  オーケストレーター起動（ユーザーがテーマを指定）
+           │
+Phase 1  主張生成（6並列）
+           ├─ Claude賛成派 ──→ 1_claims/pro_claude.md
+           ├─ Claude反対派 ──→ 1_claims/con_claude.md
+           ├─ Gemini賛成派 ──→ 1_claims/pro_gemini.md
+           ├─ Gemini反対派 ──→ 1_claims/con_gemini.md
+           ├─ Codex賛成派  ──→ 1_claims/pro_codex.md
+           └─ Codex反対派  ──→ 1_claims/con_codex.md
+           │
+Phase 2  要約（2並列）※オーケストレーターはclaims未読
+           ├─ 賛成派サマライザー（pro×3を読む）──→ 2_summaries/pro_summary.md
+           └─ 反対派サマライザー（con×3を読む）──→ 2_summaries/con_summary.md
+           │
+Phase 3  審判（1タスク）※オーケストレーターはsummaries未読
+           └─ 審判AI（要約2件を読む）──→ 3_report/final_report.md
+           │
+Phase 4  ユーザーへ完了通知</div>
+
+  <h2>3. 使い方</h2>
+  <p><code>20260319/</code> ディレクトリをカレントディレクトリとしてClaude Codeを起動し、スキルを実行する。</p>
+  <pre><code>cd 20260319
+claude
+
+# Claude Code内で:
+/debate ソフトウェア開発においてテストは本当に必要か</code></pre>
+  <p>実行後、<code>debate_YYYYMMDD_HHMMSS/</code> ディレクトリが生成される。</p>
+
+  <h2>4. 定義ファイル構成</h2>
+  <pre><code>20260319/
+├── .claude/
+│   ├── skills/
+│   │   └── debate/
+│   │       └── SKILL.md          # オーケストレーター（スキル定義）
+│   └── agents/
+│       ├── debater/
+│       │   └── AGENT.md          # 討論者エージェント（Claude用）
+│       ├── summarizer/
+│       │   └── AGENT.md          # 要約者エージェント
+│       └── judge/
+│           └── AGENT.md          # 審判エージェント
+└── prompts/
+    └── debater.md                # Gemini/Codex CLI用プロンプトテンプレート</code></pre>
+
+  <h2>5. 生成されるワークスペース</h2>
+  <pre><code>debate_20260319_143000/
+├── 1_claims/
+│   ├── pro_claude.md      # Claude賛成派の主張
+│   ├── pro_gemini.md      # Gemini賛成派の主張
+│   ├── pro_codex.md       # Codex賛成派の主張
+│   ├── con_claude.md      # Claude反対派の主張
+│   ├── con_gemini.md      # Gemini反対派の主張
+│   └── con_codex.md       # Codex反対派の主張
+├── 2_summaries/
+│   ├── pro_summary.md     # 賛成派要約（共通主張＋独自洞察）
+│   └── con_summary.md     # 反対派要約（共通主張＋独自洞察）
+└── 3_report/
+    └── final_report.md    # 最終レポート（評価＋止揚的結論）</code></pre>
+
+  <h2>6. 設計上のポイント</h2>
+
+  <div class="card">
+    <h3>オーケストレーターは中間ファイルを読まない</h3>
+    <p>オーケストレーターが主張ファイルを読むと、要約の前にバイアスが入る。ファイルパスの受け渡しのみ行い、内容の解釈はサマライザーと審判に委ねる。</p>
+  </div>
+
+  <div class="card">
+    <h3>立場ごとに要約AIを分離</h3>
+    <p>賛成・反対それぞれに専任のサマライザーを置くことで、立場の混同を防ぐ。サマライザーは「3者共通の主張（Core Claims）」と「1者だけの独自視点（Unique Insights）」を分離して出力する。</p>
+  </div>
+
+  <div class="card">
+    <h3>止揚（Aufheben）的結論</h3>
+    <p>審判AIは単純な勝ち負けではなく、弁証法的な統合を目指す。賛成・反対双方の正当な点を取り入れた、より高次の結論を導出する。</p>
+  </div>
+
+  <h2>7. スキル・エージェント定義</h2>
+  <table>
+    <thead>
+      <tr><th>役割</th><th>種別</th><th>定義ファイル</th><th>モデル</th><th>概要</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>オーケストレーター</td><td>Skill</td><td><code>.claude/skills/debate/SKILL.md</code></td><td>opus</td><td>全体の制御フロー。Phase 0〜4を順次実行</td></tr>
+      <tr><td>討論者（Claude）</td><td>Agent</td><td><code>.claude/agents/debater/AGENT.md</code></td><td>opus</td><td>テーマと立場を受け取り、主張をファイル出力</td></tr>
+      <tr><td>討論者（Gemini/Codex）</td><td>CLI</td><td><code>prompts/debater.md</code></td><td>&#8212;</td><td>CLIに渡すプロンプトテンプレート</td></tr>
+      <tr><td>要約者</td><td>Agent</td><td><code>.claude/agents/summarizer/AGENT.md</code></td><td>opus</td><td>同一立場の3ファイルを統合要約</td></tr>
+      <tr><td>審判</td><td>Agent</td><td><code>.claude/agents/judge/AGENT.md</code></td><td>opus</td><td>両要約を評価し止揚的結論を導出</td></tr>
+    </tbody>
+  </table>
+
+  <h3>フロントマター仕様</h3>
+  <p>スキル（<code>SKILL.md</code>）とエージェント（<code>AGENT.md</code>）はYAMLフロントマター付きMarkdown。</p>
+  <pre><code># SKILL.md のフロントマター例
+---
+name: debate
+description: マルチAI討論システム
+user-invocable: true
+allowed-tools: Read, Write, Bash, Glob, Grep, Agent
+model: opus
+argument-hint: "[討論テーマ]"
+---
+
+# AGENT.md のフロントマター例
+---
+name: debater
+description: 討論の参加者
+tools: Read, Write
+model: opus
+maxTurns: 5
+---</code></pre>
+
+  <h2>8. CLI呼び出し仕様</h2>
+  <p><a href="../20260318/">0318の調査結果</a>に基づく。プロンプトは一時ファイル経由で渡す（シェルエスケープ問題の回避）。</p>
+  <table>
+    <thead>
+      <tr><th>AI</th><th>呼び出し方</th><th>備考</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Claude</td><td>Agentツール（サブエージェント）</td><td>Read/Writeツールにアクセス可能</td></tr>
+      <tr><td>Gemini</td><td><code>gemini -p "$(cat prompt.txt)"</code></td><td>TTY非検出で自動ヘッドレス</td></tr>
+      <tr><td>Codex</td><td><code>codex exec "$(cat prompt.txt)" 2&gt;/dev/null</code></td><td>stderr抑制で結果のみ取得</td></tr>
+    </tbody>
+  </table>
+
+  <h2>9. 前提条件</h2>
+  <ul>
+    <li>Claude Code がインストール済みであること</li>
+    <li>Gemini CLI (<code>gemini</code>) がPATH上にあること</li>
+    <li>Codex CLI (<code>codex</code>) がPATH上にあること</li>
+    <li>各CLIの認証（APIキー等）が設定済みであること</li>
+  </ul>
+
+  <h2>10. 実行サンプル</h2>
+  <p>テーマ: <strong>「ソフトウェア開発においてテストは本当に必要か」</strong></p>
+  <p>実行日時: 2026-03-19 05:33 / ワークスペース: <code>debate_20260319_053330/</code></p>
+
+  <h3>Phase 1: 主張生成（6並列）</h3>
+
+  <details class="card">
+    <summary><strong>賛成派 — Claude</strong>（4,393字）</summary>
+    <div class="sample-content">
+      <p><strong>要旨:</strong> テストは品質保証と変更容易性の両面で不可欠。省略は短期的コスト削減に見えて長期的に技術的負債を蓄積する。</p>
+      <p><strong>根拠:</strong></p>
+      <ul>
+        <li>バグの発見コストは発見時期に比例して増大（IBMの研究：本番リリース後は100倍以上）</li>
+        <li>リファクタリングとシステム進化の安全網（Fowlerの「レガシーコード＝テストのないコード」）</li>
+        <li>仕様の明文化と設計改善（TDDによるインターフェース設計の自然な改善）</li>
+        <li>CI/CDパイプラインの信頼性担保（GitHub Actions等がテストステップを前提に設計）</li>
+        <li>チーム開発における暗黙知の補完（機械可読なドキュメントとして常に最新）</li>
+      </ul>
+      <p><strong>先制回答:</strong> 小規模でもコアロジックにはテストを書く習慣が将来の拡張に備えた合理的判断。テストなしの手動確認・障害対応コストを定量比較すれば投資は正当化される。</p>
+    </div>
+  </details>
+
+  <details class="card">
+    <summary><strong>賛成派 — Gemini</strong>（4,266字）</summary>
+    <div class="sample-content">
+      <p><strong>要旨:</strong> テストは単なる確認作業ではなく、品質・開発効率・ビジネス持続可能性を支える不可欠な基盤。</p>
+      <p><strong>根拠:</strong></p>
+      <ul>
+        <li>品質担保とエンドユーザーからの信頼獲得（アリアン5ロケット爆発事故の事例）</li>
+        <li>開発ライフサイクル全体のコスト削減（シフトレフトによる手戻り最小化）</li>
+        <li>安全なリファクタリングと継続的な機能進化の実現</li>
+        <li>「動く仕様書」としての役割とチームの意思疎通</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="card">
+    <summary><strong>賛成派 — Codex</strong>（4,032字）</summary>
+    <div class="sample-content">
+      <p><strong>要旨:</strong> テストは品質確保・保守性向上・コスト削減・仕様共有・属人化防止のために必要な開発活動。</p>
+      <p><strong>根拠:</strong></p>
+      <ul>
+        <li>品質を安定させ重大な不具合の流出を防ぐ（ECサイト・金融系の具体例）</li>
+        <li>変更に強い開発を可能にする（回帰テストが安全網として機能）</li>
+        <li>開発コストを長期的に下げる（本番障害の対応コスト vs 開発初期の修正コスト）</li>
+        <li>仕様理解とチーム開発を支える（正常系・異常系・境界条件の共有）</li>
+        <li>属人化防止（担当者退職後の保守不能リスク）— <em>Codex独自の視点</em></li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="card">
+    <summary><strong>反対派 — Claude</strong>（4,378字）</summary>
+    <div class="sample-content">
+      <p><strong>要旨:</strong> テストは品質向上の一手段に過ぎず、すべての開発文脈において必須とはいえない。</p>
+      <p><strong>根拠:</strong></p>
+      <ul>
+        <li>小規模・短命なプロジェクトではROIが成立しない</li>
+        <li>テスト自体がバグを生む（偽の安心感。2022年 State of Testing調査）</li>
+        <li>型システム・静的解析・形式検証がテストを代替しつつある（Rustの所有権モデル等）</li>
+        <li>実装詳細に密結合したテストがリファクタリングを阻害する</li>
+        <li>本番トラフィックを用いた観測型品質保証の台頭（Netflix・Amazon）</li>
+      </ul>
+      <p><strong>先制回答:</strong> 品質保証はテスト以外の手段の組み合わせで達成可能。テスト整備は安定フェーズ以降でも合理的。</p>
+    </div>
+  </details>
+
+  <details class="card">
+    <summary><strong>反対派 — Gemini</strong>（4,392字）</summary>
+    <div class="sample-content">
+      <p><strong>要旨:</strong> 「テストは必ずしも常に必要・最適解であるとは限らない」</p>
+      <p><strong>根拠:</strong></p>
+      <ul>
+        <li>市場投入速度（Time-to-Market）の機会損失（Twitter初期の事例）</li>
+        <li>テストコード自体が「負債」となるリスク（カバレッジ100%追求の弊害）</li>
+        <li>「テスト＝品質」という誤認と心理的油断</li>
+        <li>現代的な型システムと静的解析による代替</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="card">
+    <summary><strong>反対派 — Codex</strong>（4,868字）</summary>
+    <div class="sample-content">
+      <p><strong>要旨:</strong> テストはあらゆるソフトウェア開発で必須とするのは現実的ではない。</p>
+      <p><strong>根拠:</strong></p>
+      <ul>
+        <li>費用対効果に合わないケースの存在（社内限定ツール・データ変換スクリプト）— <em>Codex独自の視点</em></li>
+        <li>テスト以外の品質確保手段（SQLの制約・ORM・入力バリデーション・CI上のLint）</li>
+        <li>テストが保守負担となり開発速度を下げる</li>
+        <li>実運用での価値がテスト有無より重要（段階的公開・ログ監視・素早い修正体制）</li>
+        <li>テストがあっても品質は保証されず、過信は危険</li>
+      </ul>
+    </div>
+  </details>
+
+  <h3>Phase 2: 要約（2並列）</h3>
+
+  <details class="card">
+    <summary><strong>賛成派サマライザー</strong></summary>
+    <div class="sample-content">
+      <p><strong>共通主張（Core Claims）:</strong></p>
+      <ul>
+        <li>早期バグ発見によるコスト削減（IBMの調査: 本番後修正は100倍以上）</li>
+        <li>変更・リファクタリングに対する安全網</li>
+        <li>動く仕様書としてのチーム開発支援</li>
+        <li>品質保証と信頼性の確保</li>
+      </ul>
+      <p><strong>独自の洞察（Unique Insights）:</strong></p>
+      <ul>
+        <li><strong>Claude独自:</strong> CI/CDパイプラインとの構造的統合 / TDDによる設計改善効果</li>
+        <li><strong>Gemini独自:</strong> アリアン5ロケット爆発事故という歴史的失敗事例の引用</li>
+        <li><strong>Codex独自:</strong> 属人化リスクとしての視点 / 業務ドメイン固有の具体例（ECサイト・金融系）</li>
+      </ul>
+      <p><strong>強度評価:</strong> 複数の独立した軸から一貫して同一結論を支持。ただし反論耐性の厚みにばらつきあり。</p>
+    </div>
+  </details>
+
+  <details class="card">
+    <summary><strong>反対派サマライザー</strong></summary>
+    <div class="sample-content">
+      <p><strong>共通主張（Core Claims）:</strong></p>
+      <ul>
+        <li>コスト対効果からテストが合理的でないケースの存在</li>
+        <li>型システム・静的解析がテストを部分的に代替しうる</li>
+        <li>テストコード自体が保守負担となり開発速度を阻害する</li>
+        <li>テストの存在が品質を保証するわけではなく過信が危険</li>
+        <li>観測・監視・ロールバック等の代替品質保証手段の成熟</li>
+      </ul>
+      <p><strong>独自の洞察（Unique Insights）:</strong></p>
+      <ul>
+        <li><strong>Claude独自:</strong> テスト自体がバグを生む「偽の安心感」 / 段階的戦略の正当化 / Netflix・Amazonの事例</li>
+        <li><strong>Gemini独自:</strong> Twitter初期の成長事例 / 「テストのための開発」という本末転倒の具体描写</li>
+        <li><strong>Codex独自:</strong> 社内限定ツールという地味だが現実的なユースケース / SQL制約・ORM等のインフラ層による品質担保</li>
+      </ul>
+      <p><strong>強度評価:</strong> 「無条件の必須論への反証」という抑制的立場は堅固だが、ミッションクリティカル領域への言及が薄く適用範囲の限界が不明確。</p>
+    </div>
+  </details>
+
+  <h3>Phase 3: 最終レポート（審判）</h3>
+
+  <div class="card">
+    <h3>説得力の評価</h3>
+    <table>
+      <thead>
+        <tr><th>評価軸</th><th>賛成派</th><th>反対派</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>論理的整合性</td><td><strong>A</strong> — 複数の独立した軸から一貫して同一結論を支持</td><td><strong>B</strong> — 抑制的立場は健全だが適用範囲の限界が不明確</td></tr>
+        <tr><td>根拠の具体性</td><td><strong>A</strong> — IBM調査、アリアン5事故、ECサイト・金融系の具体例</td><td><strong>B</strong> — Netflix・Amazon等の事例はあるが因果関係の立証が不十分</td></tr>
+        <tr><td>反論への対応力</td><td><strong>B</strong> — Claudeのみ先制回答あり、他2名は反論への対応を欠く</td><td><strong>B</strong> — ミッションクリティカル領域への反論が薄い</td></tr>
+        <tr><td>独自性</td><td><strong>B</strong> — CI/CD統合やTDD設計改善等の新規性あり</td><td><strong>A</strong> — 通説を反転させる切り口に独自性</td></tr>
+        <tr><td>総合</td><td><strong>A（8.0/10）</strong></td><td><strong>B（6.5/10）</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>止揚（Aufheben）的結論</h3>
+    <p>この討論の本質的な対立は「テストが必要か否か」ではなく、<strong>「品質保証のコストをどの時点・どの手段に配分するのが最適か」</strong>という資源配分問題である。</p>
+    <p>賛成派が正しく指摘するように、欠陥コストは発見が遅れるほど指数関数的に増大し、テストはその早期発見の最も体系化された手段である。一方、反対派が正しく指摘するように、テストコード自体が保守対象であり、不確実性の高い段階で過剰なテストを整備することは投資効率を損なう。両者は矛盾しているのではなく、<strong>ソフトウェアのライフサイクル上の異なるフェーズにおける最適戦略を述べている</strong>に過ぎない。</p>
+    <p>統合的視座は<strong>「品質保証戦略のポートフォリオ管理」</strong>という概念である。テストは品質保証の重要な構成要素だが唯一の手段ではなく、型システム・静的解析・コードレビュー・監視・ロールバック機構・フォーマル検証といった手段とともに、プロジェクト特性に応じて最適な組み合わせを選択すべきである。</p>
+    <p>問うべきは「テストは必要か」ではなく、<strong>「このプロジェクト・このフェーズにおいて、品質保証への投資をどの手段にどれだけ配分するのが合理的か」</strong>である。</p>
+  </div>
+
+  <div class="card">
+    <h3>残された論点</h3>
+    <ol>
+      <li><strong>AI支援によるテスト自動生成が議論の前提を変える可能性</strong> — テスト作成コストがほぼゼロに近づいた場合、討論の構図自体が変わりうる</li>
+      <li><strong>ドメイン別のリスク分析の欠如</strong> — ミッションクリティカル領域と低リスク領域では必要性が質的に異なる</li>
+      <li><strong>テストの「書き方」の品質が議論されていない</strong> — テストの要否ではなくテスト設計の巧拙の問題が混在</li>
+    </ol>
+  </div>
+
+</div>
+</body>
+</html>

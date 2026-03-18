@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI CLI 三者討論フレームワーク</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f5f7; --surface: #fff; --border: #e5e5e7;
+      --text: #1d1d1f; --muted: #6e6e73;
+      --radius: 14px; --shadow: 0 12px 32px rgba(0,0,0,0.06);
+    }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    .container { max-width: 820px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: .5rem; }
+    .subtitle { color: var(--muted); margin-bottom: 2.5rem; }
+    h2 { font-size: 1.25rem; font-weight: 700; margin: 2.5rem 0 .75rem; border-bottom: 1px solid var(--border); padding-bottom: .4rem; }
+    h3 { font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 .5rem; }
+    p, li { font-size: .95rem; }
+    ul, ol { margin: .5rem 0 .5rem 1.5rem; }
+    li { margin-bottom: .3rem; }
+    code { background: #f2f2f4; padding: .1rem .35rem; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em; }
+    pre { background: #0f172a; color: #f8fafc; padding: 1rem 1.25rem; border-radius: 12px; overflow-x: auto; margin: .75rem 0 1.25rem; line-height: 1.55; }
+    pre code { background: transparent; padding: 0; color: inherit; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; box-shadow: var(--shadow); margin: 1rem 0; }
+    .card h3 { margin-top: 0; }
+    table { width: 100%; border-collapse: collapse; margin: .75rem 0 1.25rem; font-size: .9rem; }
+    th, td { border: 1px solid var(--border); padding: .5rem .75rem; text-align: left; }
+    th { background: #f9f9fb; font-weight: 600; }
+    .tag { display: inline-block; font-size: .72rem; font-weight: 600; padding: .2rem .55rem; border-radius: 999px; background: #f2f2f4; color: var(--muted); margin-right: .3rem; }
+    .back { display: inline-block; margin-bottom: 1.5rem; font-size: .85rem; color: var(--muted); text-decoration: none; }
+    .back:hover { color: var(--text); }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <a class="back" href="../">&larr; 100 Challenge</a>
+  <h1>AI CLI 三者討論フレームワーク</h1>
+  <p class="subtitle">Codex / Gemini CLI / Claude Code を非対話モードで呼び出し、3者間で議論させる</p>
+
+  <h2>1. 背景と目的</h2>
+  <p>Codex（OpenAI）、Gemini CLI（Google）、Claude Code（Anthropic）にはそれぞれ無料枠やクオータが存在するが、日常的に余らせてしまうことがある。これらをコマンドラインから非対話的に呼び出し、あるテーマについて3者に議論させることでクオータを有効活用する。</p>
+
+  <h2>2. 各CLIの非対話呼び出し</h2>
+
+  <div class="card">
+    <h3>Codex CLI <span class="tag">OpenAI</span></h3>
+    <pre><code># 基本：exec サブコマンドでプロンプトを直接渡す
+codex exec "あなたの意見を述べてください"
+
+# stdin からパイプで渡す
+echo "前の発言者の意見: ..." | codex exec -
+
+# 主要オプション
+#   --model &lt;model&gt;    モデル指定
+#   --full-auto         自動承認モード（確認プロンプトを出さない）
+#   --json              JSONL形式で出力（スクリプト連携向き）
+#   2&gt;/dev/null         進捗表示(stderr)を抑制して結果だけ取得</code></pre>
+    <p><strong>システムプロンプト：</strong> <code>--config experimental_instructions_file=./prompt.md</code> で指示ファイルを指定可能。</p>
+  </div>
+
+  <div class="card">
+    <h3>Gemini CLI <span class="tag">Google</span></h3>
+    <pre><code># 基本：-p フラグでヘッドレス（非対話）モード
+gemini -p "あなたの意見を述べてください"
+
+# stdin からパイプで渡す（TTY でなければ自動ヘッドレス）
+echo "前の発言者の意見: ..." | gemini -p "これに反論してください"
+
+# 主要オプション
+#   -p / --prompt       非対話モード
+#   --output-format json   JSON形式で出力</code></pre>
+    <p><strong>システムプロンプト：</strong> 環境変数 <code>GEMINI_SYSTEM_MD</code> にファイルパスを指定。</p>
+    <pre><code>GEMINI_SYSTEM_MD=./system.md gemini -p "お題について議論して"</code></pre>
+  </div>
+
+  <div class="card">
+    <h3>Claude Code <span class="tag">Anthropic</span></h3>
+    <pre><code># 基本：-p (--print) フラグで非対話モード
+claude -p "あなたの意見を述べてください"
+
+# stdin からパイプで渡す
+echo "前の発言者の意見: ..." | claude -p "これに対するコメントを述べて"
+
+# 主要オプション
+#   -p / --print                  非対話モード
+#   --append-system-prompt &lt;text&gt;  デフォルト指示に追記（推奨）
+#   --system-prompt &lt;text&gt;         システムプロンプトを完全置換
+#   --system-prompt-file &lt;path&gt;    ファイルからシステムプロンプト読込
+#   --output-format json           JSON形式で出力</code></pre>
+  </div>
+
+  <h2>3. フラグ比較表</h2>
+  <table>
+    <thead>
+      <tr><th>機能</th><th>Codex</th><th>Gemini CLI</th><th>Claude Code</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>非対話実行</td><td><code>codex exec "..."</code></td><td><code>gemini -p "..."</code></td><td><code>claude -p "..."</code></td></tr>
+      <tr><td>stdin 入力</td><td><code>| codex exec -</code></td><td><code>| gemini -p "..."</code></td><td><code>| claude -p "..."</code></td></tr>
+      <tr><td>システムプロンプト</td><td>設定ファイル経由</td><td>環境変数 <code>GEMINI_SYSTEM_MD</code></td><td><code>--append-system-prompt</code></td></tr>
+      <tr><td>JSON出力</td><td><code>--json</code></td><td><code>--output-format json</code></td><td><code>--output-format json</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>4. 三者討論スクリプト</h2>
+  <p>以下は「あるテーマについて3者が順番に発言し、前の発言を踏まえて議論する」シェルスクリプトの基本形。</p>
+
+  <pre><code>#!/bin/bash
+set -euo pipefail
+
+TOPIC="${1:?Usage: $0 &lt;topic&gt; [rounds]}"
+ROUNDS="${2:-3}"
+ROLE="あなたはパネルディスカッションのパネリストです。他の参加者の意見を踏まえつつ、自分の立場で簡潔に発言してください。"
+
+log=""
+
+for round in $(seq 1 "$ROUNDS"); do
+  echo "====== Round $round / $ROUNDS ======"
+
+  # --- Codex ---
+  prompt_codex="テーマ: ${TOPIC}\n\nこれまでの議論:\n${log:-（まだ発言なし）}\n\n${ROLE}"
+  say_codex=$(echo -e "$prompt_codex" | codex exec - 2>/dev/null)
+  echo -e "\n[Codex] $say_codex"
+  log="${log}\n\n[Codex Round${round}] ${say_codex}"
+
+  # --- Gemini ---
+  prompt_gemini="テーマ: ${TOPIC}\n\nこれまでの議論:\n${log}\n\n${ROLE}"
+  say_gemini=$(echo -e "$prompt_gemini" | gemini -p "上記の議論を踏まえて発言してください")
+  echo -e "\n[Gemini] $say_gemini"
+  log="${log}\n\n[Gemini Round${round}] ${say_gemini}"
+
+  # --- Claude ---
+  prompt_claude="テーマ: ${TOPIC}\n\nこれまでの議論:\n${log}\n\n${ROLE}"
+  say_claude=$(echo -e "$prompt_claude" | claude -p "上記の議論を踏まえて発言してください")
+  echo -e "\n[Claude] $say_claude"
+  log="${log}\n\n[Claude Round${round}] ${say_claude}"
+done
+
+echo ""
+echo "====== 議論終了 ======"
+echo -e "$log"</code></pre>
+
+  <h3>使い方</h3>
+  <pre><code># テーマを指定して3ラウンド（デフォルト）
+./debate.sh "ソフトウェア開発においてテストは本当に必要か"
+
+# ラウンド数を指定
+./debate.sh "AIは人間の創造性を超えるか" 5</code></pre>
+
+  <h2>5. 応用：立場を固定した討論</h2>
+  <p>各AIに異なる「立場」を与えることで、より構造的な議論が可能になる。システムプロンプトで立場を注入する。</p>
+
+  <pre><code>#!/bin/bash
+set -euo pipefail
+
+TOPIC="${1:?Usage: $0 &lt;topic&gt; [rounds]}"
+ROUNDS="${2:-3}"
+
+# 各AIに異なる立場を付与
+ROLE_CODEX="あなたは楽観主義者です。技術の可能性を積極的に評価する立場で発言してください。"
+ROLE_GEMINI="あなたは現実主義者です。データと事実に基づいてバランスの取れた視点で発言してください。"
+ROLE_CLAUDE="あなたは懐疑主義者です。リスクや見落とされがちな問題点を指摘する立場で発言してください。"
+
+log=""
+
+for round in $(seq 1 "$ROUNDS"); do
+  echo "====== Round $round / $ROUNDS ======"
+
+  ctx="テーマ: ${TOPIC}\n\nこれまでの議論:\n${log:-（まだ発言なし）}"
+
+  say_codex=$(echo -e "${ctx}\n\n${ROLE_CODEX}" | codex exec - 2>/dev/null)
+  echo -e "\n[楽観派/Codex] $say_codex"
+  log="${log}\n\n[楽観派 Round${round}] ${say_codex}"
+
+  say_gemini=$(echo -e "${ctx}\n\n${ROLE_GEMINI}" | gemini -p "上記を踏まえて発言してください")
+  echo -e "\n[現実派/Gemini] $say_gemini"
+  log="${log}\n\n[現実派 Round${round}] ${say_gemini}"
+
+  say_claude=$(echo -e "${ctx}\n\n${ROLE_CLAUDE}" \
+    | claude -p --append-system-prompt "$ROLE_CLAUDE" "上記を踏まえて発言してください")
+  echo -e "\n[懐疑派/Claude] $say_claude"
+  log="${log}\n\n[懐疑派 Round${round}] ${say_claude}"
+done
+
+echo ""
+echo "====== 議論終了 ======"
+echo -e "$log"</code></pre>
+
+  <h2>6. 注意点</h2>
+  <ul>
+    <li><strong>コンテキスト長：</strong> ラウンドが増えると累積ログが長くなる。必要に応じて要約ステップを挟むか、直近N発言のみ渡す工夫が必要</li>
+    <li><strong>stderr の扱い：</strong> Codex は進捗を stderr に出力するため <code>2>/dev/null</code> でリダイレクトすると結果だけ取得できる</li>
+    <li><strong>レート制限：</strong> 各サービスのレート制限に注意。連続呼び出し時は <code>sleep</code> を入れるのが安全</li>
+    <li><strong>出力のパース：</strong> スクリプトで後処理する場合は <code>--json</code> / <code>--output-format json</code> を使うと安定する</li>
+    <li><strong>Codex のシステムプロンプト：</strong> 正式なフラグがないため、プロンプト本文に立場指示を含める方が確実</li>
+  </ul>
+
+</div>
+</body>
+</html>

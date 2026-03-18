@@ -1,0 +1,5 @@
+{
+  "title": "マルチAI討論システム（Claude Code スラッシュコマンド）",
+  "description": "Claude Code・Gemini CLI・Codex CLIの6エージェントが賛成/反対に分かれて討論し、要約・審判を経て止揚的結論を導く。",
+  "tags": ["Claude Code", "Gemini CLI", "Codex CLI", "Multi-Agent"]
+}
