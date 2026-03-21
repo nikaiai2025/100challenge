@@ -279,7 +279,19 @@
         <span class="card-tag">5ch / コピペ / インターネット文化</span>
         <div class="card-actions">
           <a class="btn" href="./20260321/">開く</a>
+          <button class="btn ghost comment-btn" type="button" data-comment-id="comment-20260321"
+            data-comment-title="2026-03-21 コメント">コメント</button>
         </div>
+        <template id="comment-20260321">
+          ## 2026-03-21 メモ
+          - Claude / Gemini CLI / Codex CLI の計15エージェントに同一テーマで並行調査させた
+          - 各AIに少しずつ違う切り口で依頼（有名コピペ、AA、いい話、怖い話、スラング、文化論）
+          - 同じネタを複数AIが拾う→登場回数=知名度の指標として使える
+          - AI単体だと結果がブレる（ハルシネーション、知識の偏り）。複数に聞いて突合すればノイズが減る
+          - 15ファイルのrawdataをカテゴリ別に重複排除・統合して6ファイルに整理
+          - 最終的に182エントリ。shadcn/ui風UIで閲覧できるようにした
+          - 収集→統合→ページ化まで全部Claude Codeのサブエージェント機能で自動化
+        </template>
       </article>
 
       <article class="card">
