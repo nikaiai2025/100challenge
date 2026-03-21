@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ja" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5ch コピペ文化アーカイブ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            border: 'hsl(240 3.7% 15.9%)',
+            input: 'hsl(240 3.7% 15.9%)',
+            ring: 'hsl(240 4.9% 83.9%)',
+            background: 'hsl(240 10% 3.9%)',
+            foreground: 'hsl(0 0% 98%)',
+            primary: { DEFAULT: 'hsl(0 0% 98%)', foreground: 'hsl(240 5.9% 10%)' },
+            secondary: { DEFAULT: 'hsl(240 3.7% 15.9%)', foreground: 'hsl(0 0% 98%)' },
+            muted: { DEFAULT: 'hsl(240 3.7% 15.9%)', foreground: 'hsl(240 5% 64.9%)' },
+            accent: { DEFAULT: 'hsl(240 3.7% 15.9%)', foreground: 'hsl(0 0% 98%)' },
+            card: { DEFAULT: 'hsl(240 10% 3.9%)', foreground: 'hsl(0 0% 98%)' },
+          },
+          borderRadius: { lg: '0.5rem', md: 'calc(0.5rem - 2px)', sm: 'calc(0.5rem - 4px)' },
+          fontFamily: { sans: ['"Inter"', '"Noto Sans JP"', 'system-ui', 'sans-serif'], mono: ['"JetBrains Mono"', '"MS PGothic"', 'monospace'] },
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { scrollbar-width: thin; scrollbar-color: hsl(240 3.7% 25%) transparent; }
+    body { background: hsl(240 10% 3.9%); }
+    .aa-block { font-family: 'MS PGothic', 'IPAMonaPGothic', 'Monapo', monospace; font-size: 16px; line-height: 18px; white-space: pre; overflow-x: auto; }
+    .prose pre { background: hsl(240 6% 10%); border: 1px solid hsl(240 3.7% 20%); border-radius: 0.5rem; padding: 1rem; overflow-x: auto; font-family: 'MS PGothic', 'IPAMonaPGothic', monospace; font-size: 14px; line-height: 18px; color: hsl(0 0% 85%); }
+    .prose blockquote { border-left: 3px solid hsl(240 3.7% 25%); padding-left: 1rem; margin: 0.75rem 0; color: hsl(0 0% 75%); font-style: normal; }
+    .prose h3 { color: hsl(0 0% 90%); font-size: 0.875rem; font-weight: 600; margin: 1rem 0 0.5rem; }
+    .prose p { margin: 0.5rem 0; }
+    .prose ul { padding-left: 1.25rem; margin: 0.5rem 0; }
+    .prose li { margin: 0.25rem 0; }
+    .prose table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.8rem; }
+    .prose th, .prose td { border: 1px solid hsl(240 3.7% 20%); padding: 0.375rem 0.5rem; text-align: left; }
+    .prose th { background: hsl(240 6% 10%); font-weight: 600; color: hsl(0 0% 90%); }
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .count-bar { transition: width 0.5s ease-out; }
+    .card-hover { transition: all 0.2s ease; }
+    .card-hover:hover { background: hsl(240 3.7% 18%); border-color: hsl(240 3.7% 25%); }
+    .tab-active { background: hsl(0 0% 98%) !important; color: hsl(240 5.9% 10%) !important; }
+    details summary { cursor: pointer; list-style: none; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .chevron { transform: rotate(90deg); }
+    .chevron { transition: transform 0.2s ease; }
+    .search-input:focus { outline: none; box-shadow: 0 0 0 2px hsl(240 4.9% 83.9%); }
+  </style>
+</head>
+<body class="bg-background text-foreground min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-border sticky top-0 z-50 bg-background/80 backdrop-blur-sm">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-bold tracking-tight">5ch コピペ文化アーカイブ</h1>
+        <p class="text-sm text-muted-foreground mt-0.5">旧2ちゃんねるのコピペ・AA・スラングを網羅的に収集・整理</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="total-count" class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md font-mono"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Search & Filters -->
+  <div class="max-w-5xl mx-auto px-4 pt-6 pb-2">
+    <div class="flex flex-col sm:flex-row gap-3">
+      <div class="relative flex-1">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <input type="text" id="search" placeholder="キーワードで検索..." class="search-input w-full bg-secondary border border-border rounded-md pl-10 pr-4 py-2 text-sm placeholder:text-muted-foreground" />
+      </div>
+      <select id="sort" class="bg-secondary border border-border rounded-md px-3 py-2 text-sm cursor-pointer">
+        <option value="count">登場回数順</option>
+        <option value="title">名前順</option>
+        <option value="year">年代順</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="max-w-5xl mx-auto px-4 py-3">
+    <div class="flex flex-wrap gap-1.5" id="tabs"></div>
+  </div>
+
+  <!-- Content -->
+  <main class="max-w-5xl mx-auto px-4 pb-16">
+    <div id="entries" class="space-y-3"></div>
+    <div id="empty" class="hidden text-center py-20">
+      <p class="text-muted-foreground text-lg">該当するエントリがありません</p>
+    </div>
+  </main>
+
+  <script>
+    const CATEGORIES = [
+      { id: 'all', label: 'すべて', icon: '◉' },
+      { id: 'famous_copipe', label: '有名コピペ', icon: '📋' },
+      { id: 'ascii_art', label: 'AA', icon: '🎨' },
+      { id: 'good_stories', label: 'いい話', icon: '✨' },
+      { id: 'horror_occult', label: '怖い話', icon: '👻' },
+      { id: 'net_slang', label: 'スラング', icon: '💬' },
+      { id: 'culture_history', label: '文化論', icon: '📖' },
+    ];
+
+    let allData = [];
+    let activeCategory = 'all';
+
+    // Render category tabs
+    function renderTabs() {
+      const container = document.getElementById('tabs');
+      container.innerHTML = CATEGORIES.map(cat => `
+        <button
+          data-cat="${cat.id}"
+          class="tab-btn px-3 py-1.5 rounded-md text-sm font-medium transition-colors
+            ${cat.id === activeCategory ? 'tab-active' : 'bg-secondary text-muted-foreground hover:text-foreground hover:bg-accent'}"
+        >
+          <span class="mr-1">${cat.icon}</span>${cat.label}
+          <span class="ml-1 text-xs opacity-60">${cat.id === 'all' ? allData.length : allData.filter(d => d.category === cat.id).length}</span>
+        </button>
+      `).join('');
+
+      container.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeCategory = btn.dataset.cat;
+          renderTabs();
+          renderEntries();
+        });
+      });
+    }
+
+    // Count bar visual
+    function countBar(count, max) {
+      const pct = (count / max) * 100;
+      const color = count >= 5 ? 'bg-amber-500' : count >= 3 ? 'bg-sky-500' : 'bg-zinc-500';
+      return `
+        <div class="flex items-center gap-2">
+          <div class="w-20 h-1.5 bg-secondary rounded-full overflow-hidden">
+            <div class="count-bar h-full ${color} rounded-full" style="width:${pct}%"></div>
+          </div>
+          <span class="text-xs font-mono text-muted-foreground">${count}/15</span>
+        </div>
+      `;
+    }
+
+    // Render entries
+    function renderEntries() {
+      const search = document.getElementById('search').value.toLowerCase();
+      const sort = document.getElementById('sort').value;
+      const container = document.getElementById('entries');
+      const empty = document.getElementById('empty');
+
+      let filtered = allData.filter(d => {
+        if (activeCategory !== 'all' && d.category !== activeCategory) return false;
+        if (search) {
+          const haystack = (d.title + ' ' + d.subcategory + ' ' + d.content + ' ' + d.background).toLowerCase();
+          return haystack.includes(search);
+        }
+        return true;
+      });
+
+      // Sort
+      filtered.sort((a, b) => {
+        if (sort === 'count') return b.count - a.count || a.title.localeCompare(b.title, 'ja');
+        if (sort === 'title') return a.title.localeCompare(b.title, 'ja');
+        if (sort === 'year') {
+          const ya = parseInt(a.year) || 9999;
+          const yb = parseInt(b.year) || 9999;
+          return ya - yb || a.title.localeCompare(b.title, 'ja');
+        }
+        return 0;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+
+      const catLabel = cat => CATEGORIES.find(c => c.id === cat)?.label || cat;
+
+      container.innerHTML = filtered.map((d, i) => `
+        <details class="card-hover border border-border rounded-lg overflow-hidden fade-in" style="animation-delay:${Math.min(i * 30, 300)}ms">
+          <summary class="flex items-center gap-3 px-4 py-3">
+            <span class="chevron text-muted-foreground text-xs select-none">▶</span>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-semibold text-sm truncate">${escapeHtml(d.title)}</span>
+                ${d.subcategory ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground whitespace-nowrap">${escapeHtml(d.subcategory)}</span>` : ''}
+                ${activeCategory === 'all' ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-accent text-muted-foreground whitespace-nowrap">${catLabel(d.category)}</span>` : ''}
+              </div>
+              ${d.year && d.year !== 'undefined' ? `<span class="text-xs text-muted-foreground">${escapeHtml(d.year)}</span>` : ''}
+            </div>
+            ${d.count > 0 ? countBar(d.count, d.maxCount || 15) : ''}
+          </summary>
+          <div class="px-4 pb-4 pt-1 border-t border-border">
+            <div class="prose prose-invert prose-sm max-w-none text-sm leading-relaxed text-muted-foreground">
+              ${d.content}
+            </div>
+            ${d.background ? `
+              <div class="mt-3 pt-3 border-t border-border">
+                <p class="text-xs font-medium text-foreground mb-1">出典・背景</p>
+                <div class="text-xs text-muted-foreground leading-relaxed">${d.background}</div>
+              </div>
+            ` : ''}
+          </div>
+        </details>
+      `).join('');
+
+      document.getElementById('total-count').textContent = `${filtered.length} / ${allData.length} entries`;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // Load data
+    async function init() {
+      try {
+        const res = await fetch('./data.json');
+        allData = await res.json();
+        renderTabs();
+        renderEntries();
+      } catch (e) {
+        document.getElementById('entries').innerHTML = `
+          <div class="text-center py-20">
+            <p class="text-muted-foreground">data.json の読み込みに失敗しました</p>
+            <p class="text-xs text-muted-foreground mt-2">node build-data.mjs を実行してください</p>
+          </div>`;
+      }
+    }
+
+    document.getElementById('search').addEventListener('input', renderEntries);
+    document.getElementById('sort').addEventListener('change', renderEntries);
+    init();
+  </script>
+</body>
+</html>
