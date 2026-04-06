@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-charcoal-950: #0d0f14;
+  --color-charcoal-900: #161820;
+  --color-charcoal-800: #1e2130;
+  --color-charcoal-700: #2d3148;
+  --color-charcoal-600: #3d4260;
+  --color-charcoal-400: #6b7280;
+  --color-charcoal-200: #c8cdd8;
+  --color-charcoal-100: #e8eaf0;
+  --color-charcoal-50:  #f4f5f8;
+
+  --color-amber-600: #d97706;
+  --color-amber-500: #f59e0b;
+  --color-amber-400: #fbbf24;
+  --color-amber-100: #fef3c7;
+  --color-amber-50:  #fffbeb;
+
+  --color-sand-100: #f5f0e8;
+  --color-sand-200: #e8e0d0;
+
+  /* Typography */
+  --font-serif: 'Noto Serif JP', Georgia, serif;
+  --font-sans: 'Noto Sans JP', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Type scale (Major Third: ×1.25) */
+  --text-xs:   0.64rem;
+  --text-sm:   0.8rem;
+  --text-base: 1rem;
+  --text-lg:   1.25rem;
+  --text-xl:   1.563rem;
+  --text-2xl:  1.953rem;
+  --text-3xl:  2.441rem;
+  --text-4xl:  3.052rem;
+  --text-5xl:  3.815rem;
+
+  /* Spacing (8px grid) */
+  --spacing-1:  8px;
+  --spacing-2:  16px;
+  --spacing-3:  24px;
+  --spacing-4:  32px;
+  --spacing-6:  48px;
+  --spacing-8:  64px;
+  --spacing-12: 96px;
+  --spacing-16: 128px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-charcoal-50);
+  color: var(--color-charcoal-900);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  line-height: 1.2;
+}
